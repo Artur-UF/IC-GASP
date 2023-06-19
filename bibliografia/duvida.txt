@@ -1,0 +1,8 @@
+tenho umas dúvidas;
+1- logo antes de começar os eventos tem umas linhas aparentemente com dados de prótons:
+
+2212 2212 6.500000e+03 6.500000e+03 0 0 247000 247000 -4 1
+1.928812e+01 9.194611e-01 1.928812e+01 0
+
+ali tem o pz e energia deles antes da interação? se sim, qual é qual? se não, onde encontro isso? ou algum deles preciso calcular antes de encontrar o pz ou energia final?  
+
