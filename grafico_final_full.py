@@ -242,6 +242,13 @@ for i in range(len(FILES)):
                         pz = float(coll[8]);
                         en = float(coll[9]);
                         dm.SetPxPyPzE(px,py,pz,en);
+                elif coll[0] == '2212':  #	NÃO SEI SE AQUI TÁ CERTO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                		dpr = TLorentzVector();
+						px = float(coll[6]);
+                        py = float(coll[7]);
+                        pz = float(coll[8]);
+                        en = float(coll[9]);
+                        dpr.SetPxPyPzE(px,py,pz,en);
                 # CLOSE EVENT AND FILL HISTOGRAMS:
 			#print "OI 2";
 		elif coll[0] == "</event>":

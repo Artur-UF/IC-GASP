@@ -23,8 +23,8 @@ with open(new, 'w') as new:
 			pzp2 = -pzini - pzf2
 			ep1 = eini - ef1
 			ep2 = eini - ef2
-			linhas.insert(i+6, f'       2212        1    0    0    0    0 0.0000E+00 0.0000E+00  +{pzp1:.10e}  {ep1:.10e}  0.938272046E+00 0.0000E+00 9.\n')
-			linhas.insert(i+7, f'       2212        1    0    0    0    0 0.0000E+00 0.0000E+00  {pzp2:.10e}  {ep2:.10e}  0.938272046E+00 0.0000E+00 9.\n')
+			linhas.insert(i+6, f'     2212  1    0    0    0    0 +{0:.10e} +{0:.10e} +{pzp1:.10e} {ep1:.10e} 0.9382720882E+00 {0:.4e} {1:.4e}\n')
+			linhas.insert(i+7, f'     2212  1    0    0    0    0 -{0:.10e} -{0:.10e} {pzp2:.10e} {ep2:.10e} 0.9382720882E+00 {0:.4e} -{1:.4e}\n')
 		i += 1
 		if i == len(linhas): break
 	for line in linhas:
