@@ -13,18 +13,18 @@ from ROOT import *
 # USER INPUT:
 
 # CROSS SECTION(S) (pb):
-xsec    = [ 1.759e-04 , 8.222e+03 , 1.929e+01 , 2.238e-01 ]; #FIXME
+xsec    = [ 1.7587434e-04 , 8.2134120e+03 , 0.74053598E+09 , 1.7856140e+01 , 2.2379938e-01 ]; #FIXME
 #xsec = [ 1. , 1. , 1. , 1. , .1 ];
 
 # PDF "_"+LABEL FOR OUTPUT FILES:
 JOB     = "histos";
-PDF     = [ 'aahbb' , 'ppazbb' , 'pphbb' , 'ppzz' ]; #FIXME
-scale   = False; #bug, use False
+PDF     = [ 'aahbb' , 'ppazbb' , 'ppbb' , 'pphbb' , 'ppzz' ]; #FIXME
+scale   = True; #bug, use False
 cuts    = False;
-setLog  = False;
+setLog  = True;
 filled  = True;
 stacked = True;
-data    = True;
+data    = False;
 
 # KINEMATICAL CUTS: #FIXME
 INVMCUTUPPER = 150.0; # (NO CUT 9999.0 )
@@ -43,14 +43,15 @@ PTCUTLOWER = 0.0; # (NO CUT 0.0)
 
 #processo 3
 FILES   = [
-"/home/arturuf/eventos/aah.lhe",
-"/home/arturuf/eventos/ppabbbar.lhe",
-"/home/arturuf/eventos/pphbbbar.lhe",
-"/home/arturuf/eventos/ppzz.lhe",
+"/home/public/aahbb.lhe",
+"/home/public/ppazbb.lhe",
+"/home/public/ppbb.lhe",
+"/home/public/pphbb.lhe",
+"/home/public/ppzz.lhe",
 ]; #FIXME
 
 # EVENT SAMPLE INPUT:
-Nevt     = 100000; #FIXME
+Nevt     = 5000; #FIXME
 EVTINPUT = str(int(Nevt/1000))+"k";
 
 #####################################################################
@@ -148,68 +149,56 @@ DDlog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)
 
 # STARTING THE LOOP OVER FILES:
 for i in range(len(FILES)):
-        f = open(FILES[i],'r');
-        print "Opening file %i: %s" % (i,FILES[i]);
+    f = open(FILES[i],'r');
+    print "Opening file %i: %s" % (i,FILES[i]);
 
 	# SORTING THE DISTRIBUTIONS IN THE ARRAYS FOR EACH FILE:
 	# EACH ARRAYS IS FORMATTED LIKE: array[] = [plots_file1, plots_file2, plots_file3, ...
 	invm_decay.append(TH1D("1D_invm_decay"+"_"+PDF[i],"", 50,  20., 350.));
 	pt_decay.append(TH1D("1D_pt_decay"+"_"+PDF[i]	, "", 50,  0., 200.));
 	ptsum_decay.append(TH1D("1D_ptsum_decay"+"_"+PDF[i], "", 50,  0., 360.));
-        eta_decay.append(TH1D("1D_eta_decay"+"_"+PDF[i]	, "", 50,-10.,  10.));
-        phi_decay.append(TH1D("1D_phi_decay"+"_"+PDF[i]	, "", 10, -4.,   4.));
-        E_decay.append(TH1D("1D_E_decay"+"_"+PDF[i]	, "", 50,  0., 250.));
-        dpt_decay.append(TH1D("1D_dpt_decay"+"_"+PDF[i] , "", 50,  0.,   0.1));
-        acop.append(TH1D("1D_acop"+"_"+PDF[i]           , "", 50,  0.,  10.));
-        acop_zoom.append(TH1D("1D_acopz"+"_"+PDF[i]     , "", 50,  -.01,   1.));
-        dphi.append(TH1D("1D_dphi"+"_"+PDF[i]           , "", 50,  0., 181.));
-        dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
-        DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
-        DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
-        DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
-        DDDpt1ptsum.append(TH2D("3D_pt1_ptsum_"+PDF[i]	, "", 50,  0.,  80., 50, 0., 120.));
-        DDDpt2ptsum.append(TH2D("3D_pt2_ptsum_"+PDF[i]	, "", 50,  0.,  80., 50, 0., 120.));
-        DDDmllptsum.append(TH2D("3D_mll_ptsum_"+PDF[i]	, "", 50,  0., 140., 50, 0., 120.));
+    eta_decay.append(TH1D("1D_eta_decay"+"_"+PDF[i]	, "", 50,-10.,  10.));
+    phi_decay.append(TH1D("1D_phi_decay"+"_"+PDF[i]	, "", 10, -4.,   4.));
+    E_decay.append(TH1D("1D_E_decay"+"_"+PDF[i]	, "", 50,  0., 250.));
+    dpt_decay.append(TH1D("1D_dpt_decay"+"_"+PDF[i] , "", 50,  0.,   0.1));
+    acop.append(TH1D("1D_acop"+"_"+PDF[i]           , "", 50,  0.,  10.));
+    acop_zoom.append(TH1D("1D_acopz"+"_"+PDF[i]     , "", 50,  -.01,   1.));
+    dphi.append(TH1D("1D_dphi"+"_"+PDF[i]           , "", 50,  0., 181.));
+    dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
+    DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
+    DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
+    DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
+    DDDpt1ptsum.append(TH2D("3D_pt1_ptsum_"+PDF[i]	, "", 50,  0.,  80., 50, 0., 120.));
+    DDDpt2ptsum.append(TH2D("3D_pt2_ptsum_"+PDF[i]	, "", 50,  0.,  80., 50, 0., 120.));
+    DDDmllptsum.append(TH2D("3D_mll_ptsum_"+PDF[i]	, "", 50,  0., 140., 50, 0., 120.));
 	DDDetaptsum.append(TH2D("3D_eta_ptsum_"+PDF[i]	, "", 50,-15.,  15., 50, 0., 100.));
-        DDDetatheta.append(TH2D("3D_eta_theta_"+PDF[i]  , "", 50,-10.,  10., 45, 0., 180.));
-        DDDetacost.append(TH2D("3D_eta_cost_"+PDF[i]    , "", 50,-15.,  15., 50,-1.,   1.));
+    DDDetatheta.append(TH2D("3D_eta_theta_"+PDF[i]  , "", 50,-10.,  10., 45, 0., 180.));
+    DDDetacost.append(TH2D("3D_eta_cost_"+PDF[i]    , "", 50,-15.,  15., 50,-1.,   1.));
 	DDDmllcost.append(TH2D("3D_mll_cost_"+PDF[i]    , "", 50,  0., 300., 50,-1.,   1.));
 	DDDth1th2.append(TH2D("3D_th1_th2_"+PDF[i]      , "", 45,  0., 180., 45, 0., 180.));
-        DDpt1pt2.append(TH2D("2D_pt1_pt2_"+PDF[i]       , "", 50,  0.,  60., 50, 0.,  60.));
-        DDphi1phi2.append(TH2D("2D_phi1_phi2_"+PDF[i]   , "", 45,  0., 180., 45, 0., 180.));
-        DDptsumphi.append(TH2D("2D_ptsum_phi_"+PDF[i] 	, "", 50,  0., 120., 45, 0., 180.));
-        DDpt1ptsum.append(TH2D("2D_pt1_ptsum_"+PDF[i] 	, "", 50,  0.,  60., 50, 0., 120.));
-        DDpt2ptsum.append(TH2D("2D_pt2_ptsum_"+PDF[i] 	, "", 50,  0.,  60., 50, 0., 100.));
-        DDmllptsum.append(TH2D("2D_mll_ptsum_"+PDF[i] 	, "", 50,  0., 140., 50, 0., 140.));
-        DDetatheta.append(TH2D("2D_eta_theta_"+PDF[i]   , "", 50,-10.,  10., 45, 0., 180.));
-        DDetacost.append(TH2D("2D_eta_cost_"+PDF[i]     , "", 50,-10.,  10., 50,-1.,   1.));
+    DDpt1pt2.append(TH2D("2D_pt1_pt2_"+PDF[i]       , "", 50,  0.,  60., 50, 0.,  60.));
+    DDphi1phi2.append(TH2D("2D_phi1_phi2_"+PDF[i]   , "", 45,  0., 180., 45, 0., 180.));
+    DDptsumphi.append(TH2D("2D_ptsum_phi_"+PDF[i] 	, "", 50,  0., 120., 45, 0., 180.));
+    DDpt1ptsum.append(TH2D("2D_pt1_ptsum_"+PDF[i] 	, "", 50,  0.,  60., 50, 0., 120.));
+    DDpt2ptsum.append(TH2D("2D_pt2_ptsum_"+PDF[i] 	, "", 50,  0.,  60., 50, 0., 100.));
+    DDmllptsum.append(TH2D("2D_mll_ptsum_"+PDF[i] 	, "", 50,  0., 140., 50, 0., 140.));
+    DDetatheta.append(TH2D("2D_eta_theta_"+PDF[i]   , "", 50,-10.,  10., 45, 0., 180.));
+    DDetacost.append(TH2D("2D_eta_cost_"+PDF[i]     , "", 50,-10.,  10., 50,-1.,   1.));
 	DDmllcost.append(TH2D("2D_mll_cost_"+PDF[i]     , "", 50,  0., 180., 50,-1.,   1.));
-        DDth1th2.append(TH2D("2D_th1_th2_"+PDF[i]       , "", 45,  0., 180., 45, 0., 180.));
+    DDth1th2.append(TH2D("2D_th1_th2_"+PDF[i]       , "", 45,  0., 180., 45, 0., 180.));
 
 	# LOOP OVER LINES IN LHE SAMPLE:
 
 	# RESET EVENT COUNTING:
-        event  = 0;
-        evPASS = 0;
+    event  = 0;
+    evPASS = 0;
 	# START LOOP:
-        '''if (i == 0):
-        	for j in xrange(434): # skip first 434 lines to avoid MG5 comments
-                	f.next();
+    if (i == 5):
+    	for j in xrange(337): # skip first 337 lines to avoid MG5 comments
+            	f.next();
 	else:
-                for j in xrange(440): # skip first 500 lines to avoid MG5 comments
-                        f.next();'''
-	if (i == 0):
-		for j in xrange(434): # skip first 434 lines to avoid MG5 comments
-			f.next()
-	elif (i == 1):
-		for j in xrange(431): # skip first 431 lines to avoid MG5 comments
-			f.next()
-	elif (i == 2):
-		for j in xrange(430): # skip first 430 lines to avoid MG5 comments
-			f.next()
-	elif (i == 3):
-		for j in xrange(440): # skip first 440 lines to avoid MG5 comments
-			f.next();
+        for j in xrange(501): # skip first 500 lines to avoid MG5 comments
+                f.next();
         for line in f:
 		# SKIP BLANK LINES:
 		line = line.strip();
@@ -217,194 +206,181 @@ for i in range(len(FILES)):
 		# STORE LINES INTO ARRAY:
 		coll = line.split();
 		# READ EVENT CONTENT:
-		#print "OI 0";
 		if coll[0] == "<event>":
-			#print "OI 1";
-                        event += 1;
-                        # SET A SCREEN OUTPUT FOR CONTROL:
+            event += 1;
+            # SET A SCREEN OUTPUT FOR CONTROL:
 			if Nevt < 10000: evtsplit = 1000;
 			else: evtsplit = 10000;
-                        perct = event / Nevt * 100.;
-                        if event%evtsplit==0: print "Event %i [%.2f%%]" % (event,perct);
-                        elif event>Nevt: break;
+                perct = event / Nevt * 100.;
+                if event%evtsplit==0: print "Event %i [%.2f%%]" % (event,perct);
+                elif event>Nevt: break;
                 # 4-VECTORS FOR DECAY PRODUCTS:
                 elif (coll[0] == '5' or coll[0] == '13') and coll[1] == '1':
-                        dp = TLorentzVector();
-                        px = float(coll[6]);
-                        py = float(coll[7]);
-                        pz = float(coll[8]);
-                        en = float(coll[9]);
-                        dp.SetPxPyPzE(px,py,pz,en);
+		            dp = TLorentzVector();
+		            px = float(coll[6]);
+		            py = float(coll[7]);
+		            pz = float(coll[8]);
+		            en = float(coll[9]);
+		            dp.SetPxPyPzE(px,py,pz,en);
                 elif coll[0] == '-13' or coll[0] == '-5':
-                        dm = TLorentzVector();
-                        px = float(coll[6]);
-                        py = float(coll[7]);
-                        pz = float(coll[8]);
-                        en = float(coll[9]);
-                        dm.SetPxPyPzE(px,py,pz,en);
-                elif coll[0] == '2212':  #	NÃO SEI SE AQUI TÁ CERTO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                		dpr = TLorentzVector();
-						px = float(coll[6]);
-                        py = float(coll[7]);
-                        pz = float(coll[8]);
-                        en = float(coll[9]);
-                        dpr.SetPxPyPzE(px,py,pz,en);
+                    dm = TLorentzVector();
+                    px = float(coll[6]);
+                    py = float(coll[7]);
+                    pz = float(coll[8]);
+                    en = float(coll[9]);
+                    dm.SetPxPyPzE(px,py,pz,en);
                 # CLOSE EVENT AND FILL HISTOGRAMS:
-			#print "OI 2";
 		elif coll[0] == "</event>":
-			#print "OI 3";
 			# KINEMATICS OF DECAY PRODUCTS:
-                        if ( cuts and INNER
- 			    and (dp+dm).M() >= INVMCUTLOWER
-			    and (dp+dm).M() <= INVMCUTUPPER
-                            and (dp+dm).Pt() >= PTPAIRCUTLOWER
-			    and (dp+dm).Pt() <= PTPAIRCUTUPPER
-                            and abs((dp+dm).Eta()) <= ETAPAIRCUT
-                            and dp.Pt() >= PTCUTLOWER
-                            and dm.Pt() >= PTCUTLOWER
-                            and dp.Pt() <= PTCUTUPPER
-                            and dm.Pt() <= PTCUTUPPER
-			):
+            if ( cuts and INNER
+				and (dp+dm).M() >= INVMCUTLOWER
+				and (dp+dm).M() <= INVMCUTUPPER
+				and (dp+dm).Pt() >= PTPAIRCUTLOWER
+				and (dp+dm).Pt() <= PTPAIRCUTUPPER
+		        and abs((dp+dm).Eta()) <= ETAPAIRCUT
+		        and dp.Pt() >= PTCUTLOWER
+		        and dm.Pt() >= PTCUTLOWER
+		        and dp.Pt() <= PTCUTUPPER
+		        and dm.Pt() <= PTCUTUPPER):
 				# 1D:
 				invm_decay[i].Fill((dp+dm).M());
 				pt_decay[i].Fill(dp.Pt());
 				pt_decay[i].Fill(dm.Pt());
 				ptsum_decay[i].Fill((dp+dm).Pt());
-                                eta_decay[i].Fill((dp).Eta());
-                                eta_decay[i].Fill((dm).Eta());
-                                phi_decay[i].Fill(dp.Phi());
-                                phi_decay[i].Fill(dm.Phi());
-                                E_decay[i].Fill(dp.E());
-                                E_decay[i].Fill(dm.E());
-                                dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
-                                dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                                dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                                acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-                                acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
+                eta_decay[i].Fill((dp).Eta());
+                eta_decay[i].Fill((dm).Eta());
+                phi_decay[i].Fill(dp.Phi());
+                phi_decay[i].Fill(dm.Phi());
+                E_decay[i].Fill(dp.E());
+                E_decay[i].Fill(dm.E());
+                dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
+                dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
+                dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
+                acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
+                acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
 				# 3D:
-                                DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
-                                DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-                                DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-                                DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-                                DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-                                DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-                                DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-                                DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-                                DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-                                DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-                                DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+                DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
+                DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
+                DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+                DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
+                DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
+                DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
+                DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
+                DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
+                DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
+                DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
+                DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
+                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
 				# 2D:
-                                DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-                                DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-                                DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-                                DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-                                DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-                                DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-                                DDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-                                DDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-                                DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                                DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-                                DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-                        	evPASS += 1;
-                        elif ( cuts and not INNER
-                            and (dp+dm).M() >= INVMCUTLOWER
-                            and (dp+dm).M() <= INVMCUTUPPER
-                            and (dp+dm).Pt() >= PTPAIRCUTLOWER
-                            and (dp+dm).Pt() <= PTPAIRCUTUPPER
-                            and abs((dp+dm).Eta()) >= ETAPAIRCUT
-                            and dp.Pt() >= PTCUTLOWER
-                            and dm.Pt() >= PTCUTLOWER
-                            and dp.Pt() <= PTCUTUPPER
-                            and dm.Pt() <= PTCUTUPPER
-                        ):
-                                # 1D:
-                                invm_decay[i].Fill((dp+dm).M());
-                                pt_decay[i].Fill(dp.Pt());
-                                pt_decay[i].Fill(dm.Pt());
-                                ptsum_decay[i].Fill((dp+dm).Pt());
-                                eta_decay[i].Fill((dp).Eta());
-                                eta_decay[i].Fill((dm).Eta());
-                                phi_decay[i].Fill(dp.Phi());
-                                phi_decay[i].Fill(dm.Phi());
-                                E_decay[i].Fill(dp.E());
-                                E_decay[i].Fill(dm.E());
-                                dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
-                                dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                                dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                                acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-                                acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-                                # 3D:
-                                DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
-                                DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-                                DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-                                DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-                                DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-                                DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-                                DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-                                DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-                                DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-                                DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-                                DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-                                # 2D:
-                                DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-                                DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-                                DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-                                DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-                                DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-                                DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-                                DDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-                                DDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-                                DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                                DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-                                DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-                                evPASS += 1;
+                DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+                DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
+                DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
+                DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
+                DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
+                DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
+                DDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
+                DDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
+                DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
+                DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
+                DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+            	evPASS += 1;
+            elif ( cuts and not INNER
+                and (dp+dm).M() >= INVMCUTLOWER
+                and (dp+dm).M() <= INVMCUTUPPER
+                and (dp+dm).Pt() >= PTPAIRCUTLOWER
+                and (dp+dm).Pt() <= PTPAIRCUTUPPER
+                and abs((dp+dm).Eta()) >= ETAPAIRCUT
+                and dp.Pt() >= PTCUTLOWER
+                and dm.Pt() >= PTCUTLOWER
+                and dp.Pt() <= PTCUTUPPER
+                and dm.Pt() <= PTCUTUPPER):
+		        # 1D:
+		        invm_decay[i].Fill((dp+dm).M());
+		        pt_decay[i].Fill(dp.Pt());
+		        pt_decay[i].Fill(dm.Pt());
+		        ptsum_decay[i].Fill((dp+dm).Pt());
+		        eta_decay[i].Fill((dp).Eta());
+		        eta_decay[i].Fill((dm).Eta());
+		        phi_decay[i].Fill(dp.Phi());
+		        phi_decay[i].Fill(dm.Phi());
+		        E_decay[i].Fill(dp.E());
+		        E_decay[i].Fill(dm.E());
+		        dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
+		        dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
+		        dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
+		        acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
+		        acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
+		        # 3D:
+		        DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
+		        DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
+		        DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+		        DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
+		        DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
+		        DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
+		        DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
+		        DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
+		        DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
+		        DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
+		        DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
+		        DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+		        # 2D:
+		        DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+		        DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
+		        DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
+		        DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
+		        DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
+		        DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
+		        DDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
+		        DDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
+		        DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
+		        DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
+		        DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+		        evPASS += 1;
 			elif not cuts:
 				# 1D:
-                                invm_decay[i].Fill((dp+dm).M());
-                                pt_decay[i].Fill(dp.Pt());
-                                pt_decay[i].Fill(dm.Pt());
-                                ptsum_decay[i].Fill((dp+dm).Pt());
-                                eta_decay[i].Fill((dp).Eta());
-                                eta_decay[i].Fill((dm).Eta());
-                                phi_decay[i].Fill(dp.Phi());
-                                phi_decay[i].Fill(dm.Phi());
-                                E_decay[i].Fill(dp.E());
-                                E_decay[i].Fill(dm.E());
-                                dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
-                                dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                                dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                                #print "%f" % abs(dp.Pt()-dm.Pt());
-                                acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-                                acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-                                #if (i ==0): print "%f" % abs(1. - abs(dp.DeltaPhi(dm))/3.141592);
-                                #print "%f" % float(dp.DeltaPhi(dm));
-                                # 3D:
-                                DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
-                                DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-                                DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-                                DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-                                DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-                                DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-                                DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-                                DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-                                DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-                                DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-                                DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+		        invm_decay[i].Fill((dp+dm).M());
+		        pt_decay[i].Fill(dp.Pt());
+		        pt_decay[i].Fill(dm.Pt());
+		        ptsum_decay[i].Fill((dp+dm).Pt());
+		        eta_decay[i].Fill((dp).Eta());
+		        eta_decay[i].Fill((dm).Eta());
+		        phi_decay[i].Fill(dp.Phi());
+		        phi_decay[i].Fill(dm.Phi());
+		        E_decay[i].Fill(dp.E());
+		        E_decay[i].Fill(dm.E());
+		        dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
+		        dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
+		        dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
+		        #print "%f" % abs(dp.Pt()-dm.Pt());
+		        acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
+		        acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
+		        #if (i ==0): print "%f" % abs(1. - abs(dp.DeltaPhi(dm))/3.141592);
+		        #print "%f" % float(dp.DeltaPhi(dm));
+		        # 3D:
+		        DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
+		        DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
+		        DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+		        DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
+		        DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
+		        DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
+		        DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
+		        DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
+		        DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
+		        DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
+		        DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
+		        DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
 				# 2D:
-                                DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-                                DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-                                DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-                                DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-                                DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-                                DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-                                DDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-                                DDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-                                DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                                DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-                                DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+                DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+                DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
+                DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
+                DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
+                DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
+                DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
+                DDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
+                DDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
+                DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
+                DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
+                DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
 	# End of loop over lines
         if cuts: print "Events passing acceptance: %i/%i" % (evPASS,event);
 #        print "Integral of %s: %.6f nb" % (PDF[i],evPASS*xsec[i]/event);
