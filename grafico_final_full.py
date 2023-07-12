@@ -13,17 +13,17 @@ from ROOT import *
 # USER INPUT:
 
 # CROSS SECTION(S) (pb):
-xsec    = [ 1.7587434e-04 , 8.2134120e+03 , 0.74053598E+09 , 1.7856140e+01 , 2.2379938e-01 ]; #FIXME
+xsec    = [ 1.759e-04 ]; #FIXME
 #xsec = [ 1. , 1. , 1. , 1. , .1 ];
 
 # PDF "_"+LABEL FOR OUTPUT FILES:
 JOB     = "histos";
-PDF     = [ 'aahbb' , 'ppazbb' , 'ppbb' , 'pphbb' , 'ppzz' ]; #FIXME
-scale   = True; #bug, use False
+PDF     = [ 'aamumu' ]; #FIXME
+scale   = False; #bug, use False
 cuts    = False;
-setLog  = True;
-filled  = True;
-stacked = True;
+setLog  = False;
+filled  = False;
+stacked = False;
 data    = False;
 
 # KINEMATICAL CUTS: #FIXME
@@ -43,15 +43,11 @@ PTCUTLOWER = 0.0; # (NO CUT 0.0)
 
 #processo 3
 FILES   = [
-"/home/public/aahbb.lhe",
-"/home/public/ppazbb.lhe",
-"/home/public/ppbb.lhe",
-"/home/public/pphbb.lhe",
-"/home/public/ppzz.lhe",
+"newunweighted_events.lhe"  
 ]; #FIXME
 
 # EVENT SAMPLE INPUT:
-Nevt     = 5000; #FIXME
+Nevt     = 100000; #FIXME
 EVTINPUT = str(int(Nevt/1000))+"k";
 
 #####################################################################
@@ -74,9 +70,9 @@ if data: LABEL+=".data";
 
 # IMAGE FORMATS TO BE CREATED:
 FILE_TYPES = [LABEL+".png"];
-print "*****";
-print "Os arquivos gravados em %s" % (FILE_TYPES[0]);
-print "*****";
+print ("*****");
+print ("Os arquivos gravados em %s" % (FILE_TYPES[0]));
+print ("*****");
 # SAVING HISTOS INTO ROOT FILE:
 FILEROOT = TFile("histos"+LABEL+".root","RECREATE");
 
@@ -101,6 +97,7 @@ acop_zoom       = [];
 dataonly        = [];
 dphi            = [];
 dphi_zoom       = [];
+protpz      = [];
 # 3D:
 DDDpt1pt2	= [];
 DDDphi1phi2	= [];
@@ -127,10 +124,10 @@ DDth1th2	= [];
 
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
-histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_decay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom];
-histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom"];
-histoslog_axis   = ["M(x^{+}x^{-})","p_{T}(x^{#pm})","p_{T}(x^{+}x^{-})","#eta(x^{+}x^{-})","#phi(x^{+},x^{-})","E(x^{+},x^{-})","#Delta p_{T}(x^{+}x^{-})","1-|#Delta#phi(x^{+}x^{-})/#pi|","1-|#Delta#phi(x^{+}x^{-})/#pi|","|#Delta#phi(x^{+}x^{-})|","|#Delta#phi(x^{+}x^{-})|"];
-histoslog_varx   = ["(GeV)","(GeV)","(GeV)","","","(GeV)","(GeV)","","","(deg)","(deg)"];
+histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_decay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz];
+histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom","protpz"];
+histoslog_axis   = ["M(x^{+}x^{-})","p_{T}(x^{#pm})","p_{T}(x^{+}x^{-})","#eta(x^{+}x^{-})","#phi(x^{+},x^{-})","E(x^{+},x^{-})","#Delta p_{T}(x^{+}x^{-})","1-|#Delta#phi(x^{+}x^{-})/#pi|","1-|#Delta#phi(x^{+}x^{-})/#pi|","|#Delta#phi(x^{+}x^{-})|","|#Delta#phi(x^{+}x^{-})|","p_{z}(p)"];
+histoslog_varx   = ["(GeV)","(GeV)","(GeV)","","","(GeV)","(GeV)","","","(deg)","(deg)","(GeV)"];
 
 legoslog         = [DDDpt1pt2,DDDphi1phi2,DDDptsumphi,DDDpt1ptsum,DDDpt2ptsum,DDDmllptsum,DDDetaptsum,DDDetatheta,DDDetacost,DDDmllcost,DDDth1th2];
 legoslog_label   = ["3Dpt1pt2","3Dphi1phi2","3Dptsumphi","3Dpt1ptsum","3Dpt2ptsum","3Dmllptsum","3Detaptsum","3Detatheta","3Detacost","3Dmllcost","3Dth1th2"];
@@ -150,13 +147,13 @@ DDlog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)
 # STARTING THE LOOP OVER FILES:
 for i in range(len(FILES)):
     f = open(FILES[i],'r');
-    print "Opening file %i: %s" % (i,FILES[i]);
+    print ("Opening file %i: %s" % (i,FILES[i]));
 
-	# SORTING THE DISTRIBUTIONS IN THE ARRAYS FOR EACH FILE:
-	# EACH ARRAYS IS FORMATTED LIKE: array[] = [plots_file1, plots_file2, plots_file3, ...
-	invm_decay.append(TH1D("1D_invm_decay"+"_"+PDF[i],"", 50,  20., 350.));
-	pt_decay.append(TH1D("1D_pt_decay"+"_"+PDF[i]	, "", 50,  0., 200.));
-	ptsum_decay.append(TH1D("1D_ptsum_decay"+"_"+PDF[i], "", 50,  0., 360.));
+    # SORTING THE DISTRIBUTIONS IN THE ARRAYS FOR EACH FILE:
+    # EACH ARRAYS IS FORMATTED LIKE: array[] = [plots_file1, plots_file2, plots_file3, ...
+    invm_decay.append(TH1D("1D_invm_decay"+"_"+PDF[i],"", 50,  20., 350.));
+    pt_decay.append(TH1D("1D_pt_decay"+"_"+PDF[i]	, "", 50,  0., 200.));
+    ptsum_decay.append(TH1D("1D_ptsum_decay"+"_"+PDF[i], "", 50,  0., 360.));
     eta_decay.append(TH1D("1D_eta_decay"+"_"+PDF[i]	, "", 50,-10.,  10.));
     phi_decay.append(TH1D("1D_phi_decay"+"_"+PDF[i]	, "", 10, -4.,   4.));
     E_decay.append(TH1D("1D_E_decay"+"_"+PDF[i]	, "", 50,  0., 250.));
@@ -165,17 +162,18 @@ for i in range(len(FILES)):
     acop_zoom.append(TH1D("1D_acopz"+"_"+PDF[i]     , "", 50,  -.01,   1.));
     dphi.append(TH1D("1D_dphi"+"_"+PDF[i]           , "", 50,  0., 181.));
     dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
+    protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,5000., 6600.))
     DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
     DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
     DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
     DDDpt1ptsum.append(TH2D("3D_pt1_ptsum_"+PDF[i]	, "", 50,  0.,  80., 50, 0., 120.));
     DDDpt2ptsum.append(TH2D("3D_pt2_ptsum_"+PDF[i]	, "", 50,  0.,  80., 50, 0., 120.));
     DDDmllptsum.append(TH2D("3D_mll_ptsum_"+PDF[i]	, "", 50,  0., 140., 50, 0., 120.));
-	DDDetaptsum.append(TH2D("3D_eta_ptsum_"+PDF[i]	, "", 50,-15.,  15., 50, 0., 100.));
+    DDDetaptsum.append(TH2D("3D_eta_ptsum_"+PDF[i]	, "", 50,-15.,  15., 50, 0., 100.));
     DDDetatheta.append(TH2D("3D_eta_theta_"+PDF[i]  , "", 50,-10.,  10., 45, 0., 180.));
     DDDetacost.append(TH2D("3D_eta_cost_"+PDF[i]    , "", 50,-15.,  15., 50,-1.,   1.));
-	DDDmllcost.append(TH2D("3D_mll_cost_"+PDF[i]    , "", 50,  0., 300., 50,-1.,   1.));
-	DDDth1th2.append(TH2D("3D_th1_th2_"+PDF[i]      , "", 45,  0., 180., 45, 0., 180.));
+    DDDmllcost.append(TH2D("3D_mll_cost_"+PDF[i]    , "", 50,  0., 300., 50,-1.,   1.));
+    DDDth1th2.append(TH2D("3D_th1_th2_"+PDF[i]      , "", 45,  0., 180., 45, 0., 180.));
     DDpt1pt2.append(TH2D("2D_pt1_pt2_"+PDF[i]       , "", 50,  0.,  60., 50, 0.,  60.));
     DDphi1phi2.append(TH2D("2D_phi1_phi2_"+PDF[i]   , "", 45,  0., 180., 45, 0., 180.));
     DDptsumphi.append(TH2D("2D_ptsum_phi_"+PDF[i] 	, "", 50,  0., 120., 45, 0., 180.));
@@ -184,69 +182,99 @@ for i in range(len(FILES)):
     DDmllptsum.append(TH2D("2D_mll_ptsum_"+PDF[i] 	, "", 50,  0., 140., 50, 0., 140.));
     DDetatheta.append(TH2D("2D_eta_theta_"+PDF[i]   , "", 50,-10.,  10., 45, 0., 180.));
     DDetacost.append(TH2D("2D_eta_cost_"+PDF[i]     , "", 50,-10.,  10., 50,-1.,   1.));
-	DDmllcost.append(TH2D("2D_mll_cost_"+PDF[i]     , "", 50,  0., 180., 50,-1.,   1.));
+    DDmllcost.append(TH2D("2D_mll_cost_"+PDF[i]     , "", 50,  0., 180., 50,-1.,   1.));
     DDth1th2.append(TH2D("2D_th1_th2_"+PDF[i]       , "", 45,  0., 180., 45, 0., 180.));
 
-	# LOOP OVER LINES IN LHE SAMPLE:
+    # LOOP OVER LINES IN LHE SAMPLE:
 
-	# RESET EVENT COUNTING:
+    # RESET EVENT COUNTING:
     event  = 0;
     evPASS = 0;
-	# START LOOP:
-    if (i == 5):
-    	for j in xrange(337): # skip first 337 lines to avoid MG5 comments
-            	f.next();
-	else:
-        for j in xrange(501): # skip first 500 lines to avoid MG5 comments
-                f.next();
-        for line in f:
-		# SKIP BLANK LINES:
-		line = line.strip();
-		if not line: continue;
-		# STORE LINES INTO ARRAY:
-		coll = line.split();
-		# READ EVENT CONTENT:
-		if coll[0] == "<event>":
+    # START LOOP:
+    '''if (i == 0):
+    	for j in xrange(434): # skip first 434 lines to avoid MG5 comments
+            	f.readline();
+    else:
+                for j in xrange(440): # skip first 500 lines to avoid MG5 comments
+                        f.readline();'''
+    print(type(f))
+    if (i == 0):
+        for j in range(386): # skip first 434 lines to avoid MG5 comments
+            f.readline()
+    elif (i == 1):
+        for j in range(431): # skip first 431 lines to avoid MG5 comments
+            f.readline()
+    elif (i == 2):
+        for j in range(430): # skip first 430 lines to avoid MG5 comments
+            f.readline()
+    elif (i == 3):
+        for j in range(440): # skip first 440 lines to avoid MG5 comments
+            f.readline();
+    for line in f:
+        # SKIP BLANK LINES:
+        line = line.strip();
+        if not line: continue;
+        # STORE LINES INTO ARRAY:
+        coll = line.split();
+        # READ EVENT CONTENT:
+        #print "OI 0";
+        if coll[0] == "<event>":
+            #print "OI 1";
             event += 1;
             # SET A SCREEN OUTPUT FOR CONTROL:
-			if Nevt < 10000: evtsplit = 1000;
-			else: evtsplit = 10000;
-                perct = event / Nevt * 100.;
-                if event%evtsplit==0: print "Event %i [%.2f%%]" % (event,perct);
-                elif event>Nevt: break;
-                # 4-VECTORS FOR DECAY PRODUCTS:
-                elif (coll[0] == '5' or coll[0] == '13') and coll[1] == '1':
-		            dp = TLorentzVector();
-		            px = float(coll[6]);
-		            py = float(coll[7]);
-		            pz = float(coll[8]);
-		            en = float(coll[9]);
-		            dp.SetPxPyPzE(px,py,pz,en);
-                elif coll[0] == '-13' or coll[0] == '-5':
-                    dm = TLorentzVector();
-                    px = float(coll[6]);
-                    py = float(coll[7]);
-                    pz = float(coll[8]);
-                    en = float(coll[9]);
-                    dm.SetPxPyPzE(px,py,pz,en);
-                # CLOSE EVENT AND FILL HISTOGRAMS:
-		elif coll[0] == "</event>":
-			# KINEMATICS OF DECAY PRODUCTS:
+            if Nevt < 10000: evtsplit = 1000;
+            else: evtsplit = 10000;
+            perct = event / Nevt * 100.;
+            if event%evtsplit==0: print ("Event %i [%.2f%%]" % (event,perct));
+            elif event>Nevt: break;
+        # 4-VECTORS FOR DECAY PRODUCTS:
+        elif (coll[0] == '5' or coll[0] == '13') and coll[1] == '1':
+            dp = TLorentzVector();
+            px = float(coll[6]);
+            py = float(coll[7]);
+            pz = float(coll[8]);
+            en = float(coll[9]);
+            dp.SetPxPyPzE(px,py,pz,en);
+        elif coll[0] == '-13' or coll[0] == '-5':
+            dm = TLorentzVector();
+            px = float(coll[6]);
+            py = float(coll[7]);
+            pz = float(coll[8]);
+            en = float(coll[9]);
+            dm.SetPxPyPzE(px,py,pz,en);
+        elif coll[0] == '2212' and eval(coll[8]) > 0:
+            dpp = TLorentzVector();
+            px = float(coll[6]);
+            py = float(coll[7]);
+            pz = float(coll[8]);
+            en = float(coll[9]);
+            dpp.SetPxPyPzE(px,py,pz,en);
+        elif coll[0] == '2212' and eval(coll[8]) < 0:
+            dpm = TLorentzVector();
+            px = float(coll[6]);
+            py = float(coll[7]);
+            pz = float(coll[8]);
+            en = float(coll[9]);
+            dpm.SetPxPyPzE(px,py,pz,en);
+        # CLOSE EVENT AND FILL HISTOGRAMS:
+        #print "OI 2";
+        elif coll[0] == "</event>":
+            # KINEMATICS OF DECAY PRODUCTS:
             if ( cuts and INNER
-				and (dp+dm).M() >= INVMCUTLOWER
-				and (dp+dm).M() <= INVMCUTUPPER
-				and (dp+dm).Pt() >= PTPAIRCUTLOWER
-				and (dp+dm).Pt() <= PTPAIRCUTUPPER
-		        and abs((dp+dm).Eta()) <= ETAPAIRCUT
-		        and dp.Pt() >= PTCUTLOWER
-		        and dm.Pt() >= PTCUTLOWER
-		        and dp.Pt() <= PTCUTUPPER
-		        and dm.Pt() <= PTCUTUPPER):
-				# 1D:
-				invm_decay[i].Fill((dp+dm).M());
-				pt_decay[i].Fill(dp.Pt());
-				pt_decay[i].Fill(dm.Pt());
-				ptsum_decay[i].Fill((dp+dm).Pt());
+                and (dp+dm).M() >= INVMCUTLOWER
+                and (dp+dm).M() <= INVMCUTUPPER
+                and (dp+dm).Pt() >= PTPAIRCUTLOWER
+        	    and (dp+dm).Pt() <= PTPAIRCUTUPPER
+                and abs((dp+dm).Eta()) <= ETAPAIRCUT
+                and dp.Pt() >= PTCUTLOWER
+                and dm.Pt() >= PTCUTLOWER
+                and dp.Pt() <= PTCUTUPPER
+                and dm.Pt() <= PTCUTUPPER):
+                # 1D:
+                invm_decay[i].Fill((dp+dm).M());
+                pt_decay[i].Fill(dp.Pt());
+                pt_decay[i].Fill(dm.Pt());
+                ptsum_decay[i].Fill((dp+dm).Pt());
                 eta_decay[i].Fill((dp).Eta());
                 eta_decay[i].Fill((dm).Eta());
                 phi_decay[i].Fill(dp.Phi());
@@ -258,7 +286,7 @@ for i in range(len(FILES)):
                 dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
                 acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
                 acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-				# 3D:
+                # 3D:
                 DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
                 DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
                 DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
@@ -271,7 +299,7 @@ for i in range(len(FILES)):
                 DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
                 DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
                 DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-				# 2D:
+                # 2D:
                 DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
                 DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
                 DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
@@ -283,7 +311,7 @@ for i in range(len(FILES)):
                 DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
                 DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
                 DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-            	evPASS += 1;
+                evPASS += 1;
             elif ( cuts and not INNER
                 and (dp+dm).M() >= INVMCUTLOWER
                 and (dp+dm).M() <= INVMCUTUPPER
@@ -294,82 +322,36 @@ for i in range(len(FILES)):
                 and dm.Pt() >= PTCUTLOWER
                 and dp.Pt() <= PTCUTUPPER
                 and dm.Pt() <= PTCUTUPPER):
-		        # 1D:
-		        invm_decay[i].Fill((dp+dm).M());
-		        pt_decay[i].Fill(dp.Pt());
-		        pt_decay[i].Fill(dm.Pt());
-		        ptsum_decay[i].Fill((dp+dm).Pt());
-		        eta_decay[i].Fill((dp).Eta());
-		        eta_decay[i].Fill((dm).Eta());
-		        phi_decay[i].Fill(dp.Phi());
-		        phi_decay[i].Fill(dm.Phi());
-		        E_decay[i].Fill(dp.E());
-		        E_decay[i].Fill(dm.E());
-		        dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
-		        dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-		        dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-		        acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-		        acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-		        # 3D:
-		        DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
-		        DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-		        DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-		        DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-		        DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-		        DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-		        DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-		        DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-		        DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-		        DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-		        DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-		        DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-		        # 2D:
-		        DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-		        DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-		        DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-		        DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-		        DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-		        DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-		        DDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-		        DDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-		        DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-		        DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-		        DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-		        evPASS += 1;
-			elif not cuts:
-				# 1D:
-		        invm_decay[i].Fill((dp+dm).M());
-		        pt_decay[i].Fill(dp.Pt());
-		        pt_decay[i].Fill(dm.Pt());
-		        ptsum_decay[i].Fill((dp+dm).Pt());
-		        eta_decay[i].Fill((dp).Eta());
-		        eta_decay[i].Fill((dm).Eta());
-		        phi_decay[i].Fill(dp.Phi());
-		        phi_decay[i].Fill(dm.Phi());
-		        E_decay[i].Fill(dp.E());
-		        E_decay[i].Fill(dm.E());
-		        dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
-		        dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-		        dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-		        #print "%f" % abs(dp.Pt()-dm.Pt());
-		        acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-		        acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-		        #if (i ==0): print "%f" % abs(1. - abs(dp.DeltaPhi(dm))/3.141592);
-		        #print "%f" % float(dp.DeltaPhi(dm));
-		        # 3D:
-		        DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
-		        DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-		        DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-		        DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-		        DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-		        DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-		        DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-		        DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-		        DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-		        DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-		        DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-		        DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-				# 2D:
+                # 1D:
+                invm_decay[i].Fill((dp+dm).M());
+                pt_decay[i].Fill(dp.Pt());
+                pt_decay[i].Fill(dm.Pt());
+                ptsum_decay[i].Fill((dp+dm).Pt());
+                eta_decay[i].Fill((dp).Eta());
+                eta_decay[i].Fill((dm).Eta());
+                phi_decay[i].Fill(dp.Phi());
+                phi_decay[i].Fill(dm.Phi());
+                E_decay[i].Fill(dp.E());
+                E_decay[i].Fill(dm.E());
+                dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
+                dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
+                dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
+                acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
+                acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
+                # 3D:
+                DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
+                DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
+                DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+                DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
+                DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
+                DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
+                DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
+                DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
+                DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
+                DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
+                DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
+                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+                # 2D:
                 DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
                 DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
                 DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
@@ -381,9 +363,57 @@ for i in range(len(FILES)):
                 DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
                 DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
                 DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-	# End of loop over lines
-        if cuts: print "Events passing acceptance: %i/%i" % (evPASS,event);
-#        print "Integral of %s: %.6f nb" % (PDF[i],evPASS*xsec[i]/event);
+                evPASS += 1;
+            elif not cuts:
+                # 1D:
+                protpz[i].Fill(dpp.Pz());
+                protpz[i].Fill(dpm.Pz());
+                invm_decay[i].Fill((dp+dm).M());
+                pt_decay[i].Fill(dp.Pt());
+                pt_decay[i].Fill(dm.Pt());
+                ptsum_decay[i].Fill((dp+dm).Pt());
+                eta_decay[i].Fill((dp).Eta());
+                eta_decay[i].Fill((dm).Eta());
+                phi_decay[i].Fill(dp.Phi());
+                phi_decay[i].Fill(dm.Phi());
+                E_decay[i].Fill(dp.E());
+                E_decay[i].Fill(dm.E());
+                dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
+                dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
+                dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
+                #print "%f" % abs(dp.Pt()-dm.Pt());
+                acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
+                acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
+                #if (i ==0): print "%f" % abs(1. - abs(dp.DeltaPhi(dm))/3.141592);
+                #print "%f" % float(dp.DeltaPhi(dm));
+                # 3D:
+                DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
+                DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
+                DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+                DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
+                DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
+                DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
+                DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
+                DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
+                DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
+                DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
+                DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
+                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+                # 2D:
+                DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+                DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
+                DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
+                DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
+                DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
+                DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
+                DDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
+                DDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
+                DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
+                DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
+                DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+        # End of loop over lines
+        if cuts: print ("Events passing acceptance: %i/%i" % (evPASS,event));
+        #print ("Integral of %s: %.6f nb" % (PDF[i],evPASS*xsec[i]/event));
 # End of loop over files
 
 # Starting Drawing step:
@@ -415,7 +445,7 @@ gStyle.SetLegendBorderSize(0);
 canvas = TCanvas("plots","Plots",0,0,700,860);
 
 for i in range(len(histoslog)):
-	globals()["hs_histoslog"+str(i)] = THStack("hs","");
+    globals()["hs_histoslog"+str(i)] = THStack("hs","");
 
 # Starting loop over histograms in the arrays for each set:
 
@@ -426,62 +456,62 @@ canvas.SetRightMargin(0.18);
 if setLog: gPad.SetLogy(1);
 else: gPad.SetLogy(0);
 legs=0;
-for l in range(len(histoslog)):
-	for m in range(len(FILES)):
-                if scale:
-                        histoslog[l][m].Scale(xsec[m]/Nevt*histoslog[l][m].GetBinWidth(1));
-		histoslog[l][m].SetLineColor(m+1);
-                if (m == 4): histoslog[l][m].SetLineColor(m+2);
-                if filled:
-                        histoslog[l][m].SetFillColor(m+1);
-                        if (m == 4): histoslog[l][m].SetFillColor(m+2);
-		histoslog[l][m].SetLineWidth(3);
-		histoslog[l][m].SetLineStyle(1);
-                globals()["hs_histoslog"+str(l)].Add(histoslog[l][m]);
-                leg.AddEntry(histoslog[l][m]," "+PDF[m],"f");
-                if data:
-                    if m == 0:
-                            datapoints = histoslog[l][m].Clone();
-                            dataonly = histoslog[l][m].Clone();
-                    else:
-                            datapoints.Add(histoslog[l][m]);
-                            dataonly.Add(histoslog[l][m]);
-                            datapoints.SetFillStyle(0);
-                            datapoints.SetLineWidth(0);
-                            datapoints.SetLineStyle(0);
-                            datapoints.SetMarkerStyle(20);
-        if stacked:
-                globals()["hs_histoslog"+str(l)].Draw("");
-        else:
-                globals()["hs_histoslog"+str(l)].Draw("nostack hist");
-        if scale:
-                globals()["hs_histoslog"+str(l)].GetYaxis().SetTitle("d#sigma/d"+str(histoslog_axis[l])+str(histoslog_varx[l])+" (pb)");
-        else:
-                globals()["hs_histoslog"+str(l)].GetYaxis().SetTitle("Events");
-	globals()["hs_histoslog"+str(l)].GetXaxis().SetTitle(str(histoslog_axis[l])+" "+str(histoslog_varx[l]));
-	globals()["hs_histoslog"+str(l)].GetXaxis().SetTitleFont(42);
-	globals()["hs_histoslog"+str(l)].GetYaxis().SetTitleFont(42);
-	globals()["hs_histoslog"+str(l)].GetXaxis().SetTitleSize(0.05);
-	globals()["hs_histoslog"+str(l)].GetYaxis().SetTitleSize(0.05);
-	globals()["hs_histoslog"+str(l)].GetXaxis().SetLabelFont(42);
-	globals()["hs_histoslog"+str(l)].GetYaxis().SetLabelFont(42);
-	globals()["hs_histoslog"+str(l)].GetXaxis().SetTitleOffset(1.);
-	globals()["hs_histoslog"+str(l)].GetYaxis().SetTitleOffset(1.6);
-	globals()["hs_histoslog"+str(l)].GetXaxis().SetLabelSize(0.04);
-	globals()["hs_histoslog"+str(l)].GetYaxis().SetLabelSize(0.04);
-	globals()["hs_histoslog"+str(l)].GetXaxis().SetDecimals(True);
-        if data:
-                datapoints.Draw("E2,SAME");
-                leg.AddEntry(datapoints,"data","p");
-        leg.Draw("SAME");
-        plotlabel.Draw("SAME");
-        for k in range(len(FILE_TYPES)):
-		canvas.Print(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+histoslog_label[l]+"."+FILE_TYPES[k]);
-        leg.Clear();
-        if data:
-            dataonly.SetLineStyle(2);
-            dataonly.SetFillColor(0);
-            dataonly.SaveAs(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+histoslog_label[l]+".root");
+for l in range(len(histoslog)):         #AQUI TA ESTRANHO
+    for m in range(len(FILES)):
+            if scale:
+                    histoslog[l][m].Scale(xsec[m]/Nevt*histoslog[l][m].GetBinWidth(1));
+            histoslog[l][m].SetLineColor(m+1);
+            if (m == 4): histoslog[l][m].SetLineColor(m+2);
+            if filled:
+                    histoslog[l][m].SetFillColor(m+1);
+                    if (m == 4): histoslog[l][m].SetFillColor(m+2);
+            histoslog[l][m].SetLineWidth(3);
+            histoslog[l][m].SetLineStyle(1);
+            globals()["hs_histoslog"+str(l)].Add(histoslog[l][m]);
+            leg.AddEntry(histoslog[l][m]," "+PDF[m],"f");
+            if data:
+                if m == 0:
+                        datapoints = histoslog[l][m].Clone();
+                        dataonly = histoslog[l][m].Clone();
+                else:
+                        datapoints.Add(histoslog[l][m]);
+                        dataonly.Add(histoslog[l][m]);
+                        datapoints.SetFillStyle(0);
+                        datapoints.SetLineWidth(0);
+                        datapoints.SetLineStyle(0);
+                        datapoints.SetMarkerStyle(20);
+    if stacked:
+            globals()["hs_histoslog"+str(l)].Draw("");
+    else:
+            globals()["hs_histoslog"+str(l)].Draw("nostack hist");
+    if scale:
+            globals()["hs_histoslog"+str(l)].GetYaxis().SetTitle("d#sigma/d"+str(histoslog_axis[l])+str(histoslog_varx[l])+" (pb)");
+    else:
+            globals()["hs_histoslog"+str(l)].GetYaxis().SetTitle("Events");
+    globals()["hs_histoslog"+str(l)].GetXaxis().SetTitle(str(histoslog_axis[l])+" "+str(histoslog_varx[l]));
+    globals()["hs_histoslog"+str(l)].GetXaxis().SetTitleFont(42);
+    globals()["hs_histoslog"+str(l)].GetYaxis().SetTitleFont(42);
+    globals()["hs_histoslog"+str(l)].GetXaxis().SetTitleSize(0.05);
+    globals()["hs_histoslog"+str(l)].GetYaxis().SetTitleSize(0.05);
+    globals()["hs_histoslog"+str(l)].GetXaxis().SetLabelFont(42);
+    globals()["hs_histoslog"+str(l)].GetYaxis().SetLabelFont(42);
+    globals()["hs_histoslog"+str(l)].GetXaxis().SetTitleOffset(1.);
+    globals()["hs_histoslog"+str(l)].GetYaxis().SetTitleOffset(1.6);
+    globals()["hs_histoslog"+str(l)].GetXaxis().SetLabelSize(0.04);
+    globals()["hs_histoslog"+str(l)].GetYaxis().SetLabelSize(0.04);
+    globals()["hs_histoslog"+str(l)].GetXaxis().SetDecimals(True);
+    if data:
+            datapoints.Draw("E2,SAME");
+            leg.AddEntry(datapoints,"data","p");
+    leg.Draw("SAME");
+    plotlabel.Draw("SAME");
+    for k in range(len(FILE_TYPES)):
+    	canvas.Print(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+histoslog_label[l]+"."+FILE_TYPES[k]);
+    leg.Clear();
+    if data:
+        dataonly.SetLineStyle(2);
+        dataonly.SetFillColor(0);
+        dataonly.SaveAs(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+histoslog_label[l]+".root");
 # END loop over plots in log scale
 
 FILEROOT.Write();
