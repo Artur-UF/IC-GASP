@@ -77,6 +77,7 @@ print ("*****");
 FILEROOT = TFile("histos"+LABEL+".root","RECREATE");
 
 # CREATE INDIVIDUAL DIRS FOR IMAGE TYPES:
+print(len(FILE_TYPES))
 for l in range(len(FILE_TYPES)):
 	call(["mkdir","-p",FILE_TYPES[l]]);
 
@@ -97,7 +98,8 @@ acop_zoom       = [];
 dataonly        = [];
 dphi            = [];
 dphi_zoom       = [];
-protpz      = [];
+protpz          = [];
+proten          = [];
 # 3D:
 DDDpt1pt2	= [];
 DDDphi1phi2	= [];
@@ -124,10 +126,10 @@ DDth1th2	= [];
 
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
-histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_decay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz];
-histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom","protpz"];
-histoslog_axis   = ["M(x^{+}x^{-})","p_{T}(x^{#pm})","p_{T}(x^{+}x^{-})","#eta(x^{+}x^{-})","#phi(x^{+},x^{-})","E(x^{+},x^{-})","#Delta p_{T}(x^{+}x^{-})","1-|#Delta#phi(x^{+}x^{-})/#pi|","1-|#Delta#phi(x^{+}x^{-})/#pi|","|#Delta#phi(x^{+}x^{-})|","|#Delta#phi(x^{+}x^{-})|","p_{z}(p)"];
-histoslog_varx   = ["(GeV)","(GeV)","(GeV)","","","(GeV)","(GeV)","","","(deg)","(deg)","(GeV)"];
+histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_decay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten];
+histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom","protpz","proten"];
+histoslog_axis   = ["M(x^{+}x^{-})","p_{T}(x^{#pm})","p_{T}(x^{+}x^{-})","#eta(x^{+}x^{-})","#phi(x^{+},x^{-})","E(x^{+},x^{-})","#Delta p_{T}(x^{+}x^{-})","1-|#Delta#phi(x^{+}x^{-})/#pi|","1-|#Delta#phi(x^{+}x^{-})/#pi|","|#Delta#phi(x^{+}x^{-})|","|#Delta#phi(x^{+}x^{-})|","p_{z}(p)","E(p)"];
+histoslog_varx   = ["(GeV)","(GeV)","(GeV)","","","(GeV)","(GeV)","","","(deg)","(deg)","(GeV)","(GeV)"];
 
 legoslog         = [DDDpt1pt2,DDDphi1phi2,DDDptsumphi,DDDpt1ptsum,DDDpt2ptsum,DDDmllptsum,DDDetaptsum,DDDetatheta,DDDetacost,DDDmllcost,DDDth1th2];
 legoslog_label   = ["3Dpt1pt2","3Dphi1phi2","3Dptsumphi","3Dpt1ptsum","3Dpt2ptsum","3Dmllptsum","3Detaptsum","3Detatheta","3Detacost","3Dmllcost","3Dth1th2"];
@@ -162,7 +164,8 @@ for i in range(len(FILES)):
     acop_zoom.append(TH1D("1D_acopz"+"_"+PDF[i]     , "", 50,  -.01,   1.));
     dphi.append(TH1D("1D_dphi"+"_"+PDF[i]           , "", 50,  0., 181.));
     dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
-    protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,5000., 6600.))
+    protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,6200., 6600.))
+    proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,6200., 6600.))
     DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
     DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
     DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
@@ -197,7 +200,6 @@ for i in range(len(FILES)):
     else:
                 for j in xrange(440): # skip first 500 lines to avoid MG5 comments
                         f.readline();'''
-    print(type(f))
     if (i == 0):
         for j in range(386): # skip first 434 lines to avoid MG5 comments
             f.readline()
@@ -217,9 +219,9 @@ for i in range(len(FILES)):
         # STORE LINES INTO ARRAY:
         coll = line.split();
         # READ EVENT CONTENT:
-        #print "OI 0";
+        #print ("OI 0");
         if coll[0] == "<event>":
-            #print "OI 1";
+            #print ("OI 1");
             event += 1;
             # SET A SCREEN OUTPUT FOR CONTROL:
             if Nevt < 10000: evtsplit = 1000;
@@ -257,7 +259,7 @@ for i in range(len(FILES)):
             en = float(coll[9]);
             dpm.SetPxPyPzE(px,py,pz,en);
         # CLOSE EVENT AND FILL HISTOGRAMS:
-        #print "OI 2";
+        #print ("OI 2");
         elif coll[0] == "</event>":
             # KINEMATICS OF DECAY PRODUCTS:
             if ( cuts and INNER
@@ -368,6 +370,8 @@ for i in range(len(FILES)):
                 # 1D:
                 protpz[i].Fill(dpp.Pz());
                 protpz[i].Fill(dpm.Pz());
+                proten[i].Fill(dpp.E())
+                proten[i].Fill(dpm.E())
                 invm_decay[i].Fill((dp+dm).M());
                 pt_decay[i].Fill(dp.Pt());
                 pt_decay[i].Fill(dm.Pt());
@@ -381,11 +385,11 @@ for i in range(len(FILES)):
                 dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
                 dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
                 dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                #print "%f" % abs(dp.Pt()-dm.Pt());
+                #print ("%f" % abs(dp.Pt()-dm.Pt()));
                 acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
                 acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-                #if (i ==0): print "%f" % abs(1. - abs(dp.DeltaPhi(dm))/3.141592);
-                #print "%f" % float(dp.DeltaPhi(dm));
+                #if (i ==0): print ("%f" % abs(1. - abs(dp.DeltaPhi(dm))/3.141592));
+                #print ("%f" % float(dp.DeltaPhi(dm)));
                 # 3D:
                 DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
                 DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
@@ -456,7 +460,7 @@ canvas.SetRightMargin(0.18);
 if setLog: gPad.SetLogy(1);
 else: gPad.SetLogy(0);
 legs=0;
-for l in range(len(histoslog)):         #AQUI TA ESTRANHO
+for l in range(len(histoslog)):
     for m in range(len(FILES)):
             if scale:
                     histoslog[l][m].Scale(xsec[m]/Nevt*histoslog[l][m].GetBinWidth(1));
