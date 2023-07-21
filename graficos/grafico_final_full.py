@@ -13,12 +13,12 @@ from ROOT import *
 # USER INPUT:
 
 # CROSS SECTION(S) (pb):
-xsec    = [ 1.759e-04 ]; #FIXME
+xsec    = [ 4.515035e+2 , 1.995]; #FIXME
 #xsec = [ 1. , 1. , 1. , 1. , .1 ];
 
 # PDF "_"+LABEL FOR OUTPUT FILES:
 JOB     = "histos";
-PDF     = [ 'aamumu' ]; #FIXME
+PDF     = [ 'superchic', 'MadGraph' ]; #FIXME
 scale   = False; #bug, use False
 cuts    = False;
 setLog  = False;
@@ -43,11 +43,11 @@ PTCUTLOWER = 0.0; # (NO CUT 0.0)
 
 #processo 3
 FILES   = [
-"newunweighted_events.lhe"  
+"evrectest.dat", 'newunweighted_events.lhe'
 ]; #FIXME
 
 # EVENT SAMPLE INPUT:
-Nevt     = 100000; #FIXME
+Nevt     = 10000; #FIXME
 EVTINPUT = str(int(Nevt/1000))+"k";
 
 #####################################################################
@@ -77,7 +77,7 @@ print ("*****");
 FILEROOT = TFile("histos"+LABEL+".root","RECREATE");
 
 # CREATE INDIVIDUAL DIRS FOR IMAGE TYPES:
-print(len(FILE_TYPES))
+#print(len(FILE_TYPES))
 for l in range(len(FILE_TYPES)):
 	call(["mkdir","-p",FILE_TYPES[l]]);
 
@@ -124,6 +124,9 @@ DDetacost	= [];
 DDmllcost	= [];
 DDth1th2	= [];
 
+# SETTING THE NUMBER OF DIGITS ON AXIS
+TGaxis.SetMaxDigits(2)
+
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
 histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_decay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten];
@@ -164,8 +167,8 @@ for i in range(len(FILES)):
     acop_zoom.append(TH1D("1D_acopz"+"_"+PDF[i]     , "", 50,  -.01,   1.));
     dphi.append(TH1D("1D_dphi"+"_"+PDF[i]           , "", 50,  0., 181.));
     dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
-    protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,6200., 6600.))
-    proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,6200., 6600.))
+    protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,4300., 7200.))
+    proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,4300., 7200.))
     DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
     DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
     DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
@@ -201,7 +204,7 @@ for i in range(len(FILES)):
                 for j in xrange(440): # skip first 500 lines to avoid MG5 comments
                         f.readline();'''
     if (i == 0):
-        for j in range(386): # skip first 434 lines to avoid MG5 comments
+        for j in range(88): # skip first 434 lines to avoid MG5 comments
             f.readline()
     elif (i == 1):
         for j in range(431): # skip first 431 lines to avoid MG5 comments
@@ -372,6 +375,7 @@ for i in range(len(FILES)):
                 protpz[i].Fill(dpm.Pz());
                 proten[i].Fill(dpp.E())
                 proten[i].Fill(dpm.E())
+                '''
                 invm_decay[i].Fill((dp+dm).M());
                 pt_decay[i].Fill(dp.Pt());
                 pt_decay[i].Fill(dm.Pt());
@@ -415,7 +419,7 @@ for i in range(len(FILES)):
                 DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
                 DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
                 DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-        # End of loop over lines
+        # End of loop over lines'''
         if cuts: print ("Events passing acceptance: %i/%i" % (evPASS,event));
         #print ("Integral of %s: %.6f nb" % (PDF[i],evPASS*xsec[i]/event));
 # End of loop over files
