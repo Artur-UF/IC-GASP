@@ -86,7 +86,7 @@ for l in range(len(FILE_TYPES)):
 # ARRAYS FOR EACH TYPE OF DISTRIBUTIONS:
 #
 # 1D:
-invm_decay	= [];
+'''invm_decay	= [];
 pt_decay	= [];
 ptsum_decay	= [];
 eta_decay	= [];
@@ -97,9 +97,12 @@ acop            = [];
 acop_zoom       = [];
 dataonly        = [];
 dphi            = [];
-dphi_zoom       = [];
+dphi_zoom       = [];'''
 protpz          = [];
 proten          = [];
+monpz           = []
+monen           = []
+monpt           = []
 # 3D:
 DDDpt1pt2	= [];
 DDDphi1phi2	= [];
@@ -129,10 +132,15 @@ TGaxis.SetMaxDigits(2)
 
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
-histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_decay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten];
-histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom","protpz","proten"];
-histoslog_axis   = ["M(x^{+}x^{-})","p_{T}(x^{#pm})","p_{T}(x^{+}x^{-})","#eta(x^{+}x^{-})","#phi(x^{+},x^{-})","E(x^{+},x^{-})","#Delta p_{T}(x^{+}x^{-})","1-|#Delta#phi(x^{+}x^{-})/#pi|","1-|#Delta#phi(x^{+}x^{-})/#pi|","|#Delta#phi(x^{+}x^{-})|","|#Delta#phi(x^{+}x^{-})|","p_{z}(p)","E(p)"];
-histoslog_varx   = ["(GeV)","(GeV)","(GeV)","","","(GeV)","(GeV)","","","(deg)","(deg)","(GeV)","(GeV)"];
+histoslog        = [protpz,proten,monpz,monen,monpt];
+histoslog_label  = ["protpz","proten","monpz","monen","monpt"];
+histoslog_axis   = ["p_{z}(p)","E(p)","p_{z}(m?)","E(m?)","p_{T}(m?)"];
+histoslog_varx   = ["(GeV)","(GeV)","(GeV)","GeV","GeV"];
+
+#histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_ecay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten, monpz];
+#histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom","protpz","proten","monpz"];
+#histoslog_axis   = ["M(x^{+}x^{-})","p_{T}(x^{#pm})","p_{T}(x^{+}x^{-})","#eta(x^{+}x^{-})","#phi(x^{+},x^{-})","E(x^{+},x^{-})","#Delta p_{T}(x^{+}x^{-})","1-|#Delta#phi(x^{+}x^{-})/#pi|","1-|#Delta#phi(x^{+}x^{-})/#pi|","|#Delta#phi(x^{+}x^{-})|","|#Delta#phi(x^{+}x^{-})|","p_{z}(p)","E(p)","p_{z}(m)"];
+#histoslog_varx   = ["(GeV)","(GeV)","(GeV)","","","(GeV)","(GeV)","","","(deg)","(deg)","(GeV)","(GeV)","(GeV)"];
 
 legoslog         = [DDDpt1pt2,DDDphi1phi2,DDDptsumphi,DDDpt1ptsum,DDDpt2ptsum,DDDmllptsum,DDDetaptsum,DDDetatheta,DDDetacost,DDDmllcost,DDDth1th2];
 legoslog_label   = ["3Dpt1pt2","3Dphi1phi2","3Dptsumphi","3Dpt1ptsum","3Dpt2ptsum","3Dmllptsum","3Detaptsum","3Detatheta","3Detacost","3Dmllcost","3Dth1th2"];
@@ -156,40 +164,43 @@ for i in range(len(FILES)):
 
     # SORTING THE DISTRIBUTIONS IN THE ARRAYS FOR EACH FILE:
     # EACH ARRAYS IS FORMATTED LIKE: array[] = [plots_file1, plots_file2, plots_file3, ...
-    invm_decay.append(TH1D("1D_invm_decay"+"_"+PDF[i],"", 50,  20., 350.));
-    pt_decay.append(TH1D("1D_pt_decay"+"_"+PDF[i]	, "", 50,  0., 200.));
-    ptsum_decay.append(TH1D("1D_ptsum_decay"+"_"+PDF[i], "", 50,  0., 360.));
-    eta_decay.append(TH1D("1D_eta_decay"+"_"+PDF[i]	, "", 50,-10.,  10.));
-    phi_decay.append(TH1D("1D_phi_decay"+"_"+PDF[i]	, "", 10, -4.,   4.));
-    E_decay.append(TH1D("1D_E_decay"+"_"+PDF[i]	, "", 50,  0., 250.));
-    dpt_decay.append(TH1D("1D_dpt_decay"+"_"+PDF[i] , "", 50,  0.,   0.1));
-    acop.append(TH1D("1D_acop"+"_"+PDF[i]           , "", 50,  0.,  10.));
-    acop_zoom.append(TH1D("1D_acopz"+"_"+PDF[i]     , "", 50,  -.01,   1.));
-    dphi.append(TH1D("1D_dphi"+"_"+PDF[i]           , "", 50,  0., 181.));
-    dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
+    #invm_decay.append(TH1D("1D_invm_decay"+"_"+PDF[i],"", 50,  20., 350.));
+    #pt_decay.append(TH1D("1D_pt_decay"+"_"+PDF[i]	, "", 50,  0., 200.));
+    #ptsum_decay.append(TH1D("1D_ptsum_decay"+"_"+PDF[i], "", 50,  0., 360.));
+    #eta_decay.append(TH1D("1D_eta_decay"+"_"+PDF[i]	, "", 50,-10.,  10.));
+    #phi_decay.append(TH1D("1D_phi_decay"+"_"+PDF[i]	, "", 10, -4.,   4.));
+    #E_decay.append(TH1D("1D_E_decay"+"_"+PDF[i]	, "", 50,  0., 250.));
+    #dpt_decay.append(TH1D("1D_dpt_decay"+"_"+PDF[i] , "", 50,  0.,   0.1));
+    #acop.append(TH1D("1D_acop"+"_"+PDF[i]           , "", 50,  0.,  10.));
+    #acop_zoom.append(TH1D("1D_acopz"+"_"+PDF[i]     , "", 50,  -.01,   1.));
+    #dphi.append(TH1D("1D_dphi"+"_"+PDF[i]           , "", 50,  0., 181.));
+    #dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
     protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,4300., 7200.))
     proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,4300., 7200.))
-    DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
-    DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
-    DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
-    DDDpt1ptsum.append(TH2D("3D_pt1_ptsum_"+PDF[i]	, "", 50,  0.,  80., 50, 0., 120.));
-    DDDpt2ptsum.append(TH2D("3D_pt2_ptsum_"+PDF[i]	, "", 50,  0.,  80., 50, 0., 120.));
-    DDDmllptsum.append(TH2D("3D_mll_ptsum_"+PDF[i]	, "", 50,  0., 140., 50, 0., 120.));
-    DDDetaptsum.append(TH2D("3D_eta_ptsum_"+PDF[i]	, "", 50,-15.,  15., 50, 0., 100.));
-    DDDetatheta.append(TH2D("3D_eta_theta_"+PDF[i]  , "", 50,-10.,  10., 45, 0., 180.));
-    DDDetacost.append(TH2D("3D_eta_cost_"+PDF[i]    , "", 50,-15.,  15., 50,-1.,   1.));
-    DDDmllcost.append(TH2D("3D_mll_cost_"+PDF[i]    , "", 50,  0., 300., 50,-1.,   1.));
-    DDDth1th2.append(TH2D("3D_th1_th2_"+PDF[i]      , "", 45,  0., 180., 45, 0., 180.));
-    DDpt1pt2.append(TH2D("2D_pt1_pt2_"+PDF[i]       , "", 50,  0.,  60., 50, 0.,  60.));
-    DDphi1phi2.append(TH2D("2D_phi1_phi2_"+PDF[i]   , "", 45,  0., 180., 45, 0., 180.));
-    DDptsumphi.append(TH2D("2D_ptsum_phi_"+PDF[i] 	, "", 50,  0., 120., 45, 0., 180.));
-    DDpt1ptsum.append(TH2D("2D_pt1_ptsum_"+PDF[i] 	, "", 50,  0.,  60., 50, 0., 120.));
-    DDpt2ptsum.append(TH2D("2D_pt2_ptsum_"+PDF[i] 	, "", 50,  0.,  60., 50, 0., 100.));
-    DDmllptsum.append(TH2D("2D_mll_ptsum_"+PDF[i] 	, "", 50,  0., 140., 50, 0., 140.));
-    DDetatheta.append(TH2D("2D_eta_theta_"+PDF[i]   , "", 50,-10.,  10., 45, 0., 180.));
-    DDetacost.append(TH2D("2D_eta_cost_"+PDF[i]     , "", 50,-10.,  10., 50,-1.,   1.));
-    DDmllcost.append(TH2D("2D_mll_cost_"+PDF[i]     , "", 50,  0., 180., 50,-1.,   1.));
-    DDth1th2.append(TH2D("2D_th1_th2_"+PDF[i]       , "", 45,  0., 180., 45, 0., 180.));
+    monpz.append(TH1D("1D_monpz"+"_"+PDF[i]       , "", 50,0., 5000.))
+    monen.append(TH1D("1D_monen"+"_"+PDF[i]       , "", 50,0., 500000.))
+    monpt.append(TH1D("1D_monpt"+"_"+PDF[i]       , "", 50,0., 500000.))
+    #DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
+    #DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
+    #DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
+    #DDDpt1ptsum.append(TH2D("3D_pt1_ptsum_"+PDF[i]	, "", 50,  0.,  80., 50, 0., 120.));
+    #DDDpt2ptsum.append(TH2D("3D_pt2_ptsum_"+PDF[i]	, "", 50,  0.,  80., 50, 0., 120.));
+    #DDDmllptsum.append(TH2D("3D_mll_ptsum_"+PDF[i]	, "", 50,  0., 140., 50, 0., 120.));
+    #DDDetaptsum.append(TH2D("3D_eta_ptsum_"+PDF[i]	, "", 50,-15.,  15., 50, 0., 100.));
+    #DDDetatheta.append(TH2D("3D_eta_theta_"+PDF[i]  , "", 50,-10.,  10., 45, 0., 180.));
+    #DDDetacost.append(TH2D("3D_eta_cost_"+PDF[i]    , "", 50,-15.,  15., 50,-1.,   1.));
+    #DDDmllcost.append(TH2D("3D_mll_cost_"+PDF[i]    , "", 50,  0., 300., 50,-1.,   1.));
+    #DDDth1th2.append(TH2D("3D_th1_th2_"+PDF[i]      , "", 45,  0., 180., 45, 0., 180.));
+    #DDpt1pt2.append(TH2D("2D_pt1_pt2_"+PDF[i]       , "", 50,  0.,  60., 50, 0.,  60.));
+    #DDphi1phi2.append(TH2D("2D_phi1_phi2_"+PDF[i]   , "", 45,  0., 180., 45, 0., 180.));
+    #DDptsumphi.append(TH2D("2D_ptsum_phi_"+PDF[i] 	, "", 50,  0., 120., 45, 0., 180.));
+    #DDpt1ptsum.append(TH2D("2D_pt1_ptsum_"+PDF[i] 	, "", 50,  0.,  60., 50, 0., 120.));
+    #DDpt2ptsum.append(TH2D("2D_pt2_ptsum_"+PDF[i] 	, "", 50,  0.,  60., 50, 0., 100.));
+    #DDmllptsum.append(TH2D("2D_mll_ptsum_"+PDF[i] 	, "", 50,  0., 140., 50, 0., 140.));
+    #DDetatheta.append(TH2D("2D_eta_theta_"+PDF[i]   , "", 50,-10.,  10., 45, 0., 180.));
+    #DDetacost.append(TH2D("2D_eta_cost_"+PDF[i]     , "", 50,-10.,  10., 50,-1.,   1.));
+    #DDmllcost.append(TH2D("2D_mll_cost_"+PDF[i]     , "", 50,  0., 180., 50,-1.,   1.));
+    #DDth1th2.append(TH2D("2D_th1_th2_"+PDF[i]       , "", 45,  0., 180., 45, 0., 180.));
 
     # LOOP OVER LINES IN LHE SAMPLE:
 
@@ -240,13 +251,13 @@ for i in range(len(FILES)):
             pz = float(coll[8]);
             en = float(coll[9]);
             dp.SetPxPyPzE(px,py,pz,en);
-        elif coll[0] == '-13' or coll[0] == '-5':
-            dm = TLorentzVector();
+        elif coll[0] == '90':
+            dmo = TLorentzVector();
             px = float(coll[6]);
             py = float(coll[7]);
             pz = float(coll[8]);
             en = float(coll[9]);
-            dm.SetPxPyPzE(px,py,pz,en);
+            dmo.SetPxPyPzE(px,py,pz,en);
         elif coll[0] == '2212' and eval(coll[8]) > 0:
             dpp = TLorentzVector();
             px = float(coll[6]);
@@ -375,6 +386,9 @@ for i in range(len(FILES)):
                 protpz[i].Fill(dpm.Pz());
                 proten[i].Fill(dpp.E())
                 proten[i].Fill(dpm.E())
+                monpz[i].Fill(dmo.Pz())
+                monen[i].Fill(dmo.E())
+                monpt[i].Fill(dmo.Pt())
                 '''
                 invm_decay[i].Fill((dp+dm).M());
                 pt_decay[i].Fill(dp.Pt());
