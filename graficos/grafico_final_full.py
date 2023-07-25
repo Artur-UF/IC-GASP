@@ -13,7 +13,7 @@ from ROOT import *
 # USER INPUT:
 
 # CROSS SECTION(S) (pb):
-xsec    = [ 4.515035e+2 , 1.995]; #FIXME
+xsec    = [ 4.515035e+2 , 0.9858]; #FIXME
 #xsec = [ 1. , 1. , 1. , 1. , .1 ];
 
 # PDF "_"+LABEL FOR OUTPUT FILES:
@@ -100,6 +100,7 @@ dphi            = [];
 dphi_zoom       = [];'''
 protpz          = [];
 proten          = [];
+protxi          = []
 monpz           = []
 monen           = []
 monpt           = []
@@ -132,10 +133,10 @@ TGaxis.SetMaxDigits(2)
 
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
-histoslog        = [protpz,proten,monpz,monen,monpt];
-histoslog_label  = ["protpz","proten","monpz","monen","monpt"];
-histoslog_axis   = ["p_{z}(p)","E(p)","p_{z}(m?)","E(m?)","p_{T}(m?)"];
-histoslog_varx   = ["(GeV)","(GeV)","(GeV)","GeV","GeV"];
+histoslog        = [protpz,proten,protxi,monpz,monen,monpt];
+histoslog_label  = ["protpz","proten",'protxi',"monpz","monen","monpt"];
+histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)',"p_{z}(m?)","E(m?)","p_{T}(m?)"];
+histoslog_varx   = ["(GeV)","(GeV)",'',"(GeV)","GeV","GeV"];
 
 #histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_ecay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten, monpz];
 #histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom","protpz","proten","monpz"];
@@ -160,7 +161,7 @@ DDlog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)
 # STARTING THE LOOP OVER FILES:
 for i in range(len(FILES)):
     f = open(FILES[i],'r');
-    print ("Opening file %i: %s" % (i,FILES[i]));
+    print (f"Opening file {i}: {FILES[i]}");
 
     # SORTING THE DISTRIBUTIONS IN THE ARRAYS FOR EACH FILE:
     # EACH ARRAYS IS FORMATTED LIKE: array[] = [plots_file1, plots_file2, plots_file3, ...
@@ -177,7 +178,8 @@ for i in range(len(FILES)):
     #dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
     protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,4300., 7200.))
     proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,4300., 7200.))
-    monpz.append(TH1D("1D_monpz"+"_"+PDF[i]       , "", 50,0., 5000.))
+    protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,-0.1, .8))
+    monpz.append(TH1D("1D_monpz"+"_"+PDF[i]       , "", 50,-5000., 5000.))
     monen.append(TH1D("1D_monen"+"_"+PDF[i]       , "", 50,0., 500000.))
     monpt.append(TH1D("1D_monpt"+"_"+PDF[i]       , "", 50,0., 500000.))
     #DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
@@ -233,9 +235,7 @@ for i in range(len(FILES)):
         # STORE LINES INTO ARRAY:
         coll = line.split();
         # READ EVENT CONTENT:
-        #print ("OI 0");
         if coll[0] == "<event>":
-            #print ("OI 1");
             event += 1;
             # SET A SCREEN OUTPUT FOR CONTROL:
             if Nevt < 10000: evtsplit = 1000;
@@ -386,7 +386,9 @@ for i in range(len(FILES)):
                 protpz[i].Fill(dpm.Pz());
                 proten[i].Fill(dpp.E())
                 proten[i].Fill(dpm.E())
-                monpz[i].Fill(dmo.Pz())
+                protxi[i].Fill(1-(dpp.Pz()/6800))
+                protxi[i].Fill(1-(dpm.Pz()/(-6800)))
+                if i == 0: monpz[i].Fill(dmo.Pz())
                 monen[i].Fill(dmo.E())
                 monpt[i].Fill(dmo.Pt())
                 '''
