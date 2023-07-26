@@ -101,9 +101,11 @@ dphi_zoom       = [];'''
 protpz          = [];
 proten          = [];
 protxi          = []
+protpt          = []
 monpz           = []
 monen           = []
 monpt           = []
+phopz           = []
 # 3D:
 DDDpt1pt2	= [];
 DDDphi1phi2	= [];
@@ -133,10 +135,11 @@ TGaxis.SetMaxDigits(2)
 
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
-histoslog        = [protpz,proten,protxi,monpz,monen,monpt];
-histoslog_label  = ["protpz","proten",'protxi',"monpz","monen","monpt"];
-histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)',"p_{z}(m?)","E(m?)","p_{T}(m?)"];
-histoslog_varx   = ["(GeV)","(GeV)",'',"(GeV)","GeV","GeV"];
+histoslog        = [protpz,proten,protxi,protpt,monpz,monen,monpt,phopz];
+histoslog_label  = ["protpz","proten",'protxi','protpt',"monpz","monen","monpt",'phopz'];
+histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)',"p_{z}(m?)","E(m?)","p_{T}(m?)",'p_{z}(#alpha)'];
+histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)'];
+
 
 #histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_ecay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten, monpz];
 #histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom","protpz","proten","monpz"];
@@ -178,10 +181,12 @@ for i in range(len(FILES)):
     #dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
     protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,4300., 7200.))
     proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,4300., 7200.))
-    protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,-0.1, .8))
+    protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,0., .03))
+    protpt.append(TH1D("1D_protpt"+"_"+PDF[i]       , "", 50,-0.1, 1.))
     monpz.append(TH1D("1D_monpz"+"_"+PDF[i]       , "", 50,-5000., 5000.))
-    monen.append(TH1D("1D_monen"+"_"+PDF[i]       , "", 50,0., 500000.))
-    monpt.append(TH1D("1D_monpt"+"_"+PDF[i]       , "", 50,0., 500000.))
+    monen.append(TH1D("1D_monen"+"_"+PDF[i]       , "", 50,700., 4000.))
+    monpt.append(TH1D("1D_monpt"+"_"+PDF[i]       , "", 50,0., 1.3))
+    phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,4970., 4990.))
     #DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
     #DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
     #DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
@@ -244,13 +249,20 @@ for i in range(len(FILES)):
             if event%evtsplit==0: print ("Event %i [%.2f%%]" % (event,perct));
             elif event>Nevt: break;
         # 4-VECTORS FOR DECAY PRODUCTS:
-        elif (coll[0] == '5' or coll[0] == '13') and coll[1] == '1':
+        elif coll[0] == '22' and eval(coll[8]) > 0:
             dp = TLorentzVector();
             px = float(coll[6]);
             py = float(coll[7]);
             pz = float(coll[8]);
             en = float(coll[9]);
             dp.SetPxPyPzE(px,py,pz,en);
+        elif coll[0] == '22' and eval(coll[8]) < 0:
+            dm = TLorentzVector();
+            px = float(coll[6]);
+            py = float(coll[7]);
+            pz = float(coll[8]);
+            en = float(coll[9]);
+            dm.SetPxPyPzE(px,py,pz,en);
         elif coll[0] == '90':
             dmo = TLorentzVector();
             px = float(coll[6]);
@@ -313,6 +325,15 @@ for i in range(len(FILES)):
                 DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
                 DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
                 DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
+                DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
+                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+                # 2D:
+                DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+                DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
+                DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
+                DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
+                DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
+                DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
                 DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
                 DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
                 # 2D:
@@ -388,9 +409,14 @@ for i in range(len(FILES)):
                 proten[i].Fill(dpm.E())
                 protxi[i].Fill(1-(dpp.Pz()/6800))
                 protxi[i].Fill(1-(dpm.Pz()/(-6800)))
-                if i == 0: monpz[i].Fill(dmo.Pz())
-                monen[i].Fill(dmo.E())
-                monpt[i].Fill(dmo.Pt())
+                if i == 0:
+                    protpt[i].Fill(sqrt(dpp.Px()**2 + dpp.Py()**2))
+                    protpt[i].Fill(sqrt(dpm.Px()**2 + dpm.Py()**2))
+                    monpz[i].Fill(dmo.Pz())
+                    monen[i].Fill(dmo.E())
+                    monpt[i].Fill(dmo.Pt())
+                phopz[i].Fill(dp.Pz())
+                phopz[i].Fill(dm.Pz())
                 '''
                 invm_decay[i].Fill((dp+dm).M());
                 pt_decay[i].Fill(dp.Pt());
@@ -536,14 +562,3 @@ for l in range(len(histoslog)):
         dataonly.SetLineStyle(2);
         dataonly.SetFillColor(0);
         dataonly.SaveAs(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+histoslog_label[l]+".root");
-# END loop over plots in log scale
-
-FILEROOT.Write();
-
-#####################################################################
-#
-# C'ESTI FINI
-#
-#####################################################################
-
-
