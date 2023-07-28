@@ -102,10 +102,12 @@ protpz          = [];
 proten          = [];
 protxi          = []
 protpt          = []
+mpp             = []
 monpz           = []
 monen           = []
 monpt           = []
 phopz           = []
+phopt           = []
 # 3D:
 DDDpt1pt2	= [];
 DDDphi1phi2	= [];
@@ -135,10 +137,10 @@ TGaxis.SetMaxDigits(2)
 
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
-histoslog        = [protpz,proten,protxi,protpt,monpz,monen,monpt,phopz];
-histoslog_label  = ["protpz","proten",'protxi','protpt',"monpz","monen","monpt",'phopz'];
-histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)',"p_{z}(m?)","E(m?)","p_{T}(m?)",'p_{z}(#alpha)'];
-histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)'];
+histoslog        = [protpz,proten,protxi,protpt,mpp,monpz,monen,monpt,phopz,phopt];
+histoslog_label  = ["protpz","proten",'protxi','protpt','mpp',"monpz","monen","monpt",'phopz','phopt'];
+histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','M(p^{+}p^{-})',"p_{z}(m?)","E(m?)","p_{T}(m?)",'p_{z}(#alpha)','p_{T}(#alpha)'];
+histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)','(GeV)'];
 
 
 #histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_ecay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten, monpz];
@@ -183,10 +185,12 @@ for i in range(len(FILES)):
     proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,4300., 7200.))
     protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,0., .03))
     protpt.append(TH1D("1D_protpt"+"_"+PDF[i]       , "", 50,-0.1, 1.))
+    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,0., 100.)) # pico do superchic em 466. (erro ?)
     monpz.append(TH1D("1D_monpz"+"_"+PDF[i]       , "", 50,-5000., 5000.))
     monen.append(TH1D("1D_monen"+"_"+PDF[i]       , "", 50,700., 4000.))
     monpt.append(TH1D("1D_monpt"+"_"+PDF[i]       , "", 50,0., 1.3))
-    phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,4970., 4990.))
+    phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,4973., 4980.))
+    phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 500.))
     #DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
     #DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
     #DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
@@ -225,7 +229,7 @@ for i in range(len(FILES)):
         for j in range(88): # skip first 434 lines to avoid MG5 comments
             f.readline()
     elif (i == 1):
-        for j in range(431): # skip first 431 lines to avoid MG5 comments
+        for j in range(371): # skip first 431 lines to avoid MG5 comments
             f.readline()
     elif (i == 2):
         for j in range(430): # skip first 430 lines to avoid MG5 comments
@@ -409,14 +413,19 @@ for i in range(len(FILES)):
                 proten[i].Fill(dpm.E())
                 protxi[i].Fill(1-(dpp.Pz()/6800))
                 protxi[i].Fill(1-(dpm.Pz()/(-6800)))
+                mpp[i].Fill(sqrt((1-(dpp.Pz()/6800))*(1-(dpm.Pz()/(-6800))))*6800)
                 if i == 0:
                     protpt[i].Fill(sqrt(dpp.Px()**2 + dpp.Py()**2))
                     protpt[i].Fill(sqrt(dpm.Px()**2 + dpm.Py()**2))
                     monpz[i].Fill(dmo.Pz())
                     monen[i].Fill(dmo.E())
                     monpt[i].Fill(dmo.Pt())
+                    phopt[i].Fill(dp.Pt())
+                    phopt[i].Fill(dm.Pt())
+
                 phopz[i].Fill(dp.Pz())
                 phopz[i].Fill(dm.Pz())
+
                 '''
                 invm_decay[i].Fill((dp+dm).M());
                 pt_decay[i].Fill(dp.Pt());
