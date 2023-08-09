@@ -13,8 +13,8 @@ with open(path, 'r+') as f:
 	inicio = linhas.index('<event>\n')	
 
 # Aqui serve pra inserir os dados
-pzini = 6800		# pz inicial dos protons
-eini = 6800		# energia inicial dos protons
+pzini = 7000		# pz inicial dos protons
+eini = 7000		# energia inicial dos protons
 
 with open(new, 'w') as new:
 	i = 0

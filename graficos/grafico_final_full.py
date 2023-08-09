@@ -13,7 +13,7 @@ from ROOT import *
 # USER INPUT:
 
 # CROSS SECTION(S) (pb):
-xsec    = [ 4.515035e+2 , 0.9858]; #FIXME
+xsec    = [ 4.515035e+2 , 0.9956]; #FIXME
 #xsec = [ 1. , 1. , 1. , 1. , .1 ];
 
 # PDF "_"+LABEL FOR OUTPUT FILES:
@@ -108,6 +108,7 @@ monen           = []
 monpt           = []
 phopz           = []
 phopt           = []
+phoen           = []
 # 3D:
 DDDpt1pt2	= [];
 DDDphi1phi2	= [];
@@ -137,10 +138,10 @@ TGaxis.SetMaxDigits(2)
 
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
-histoslog        = [protpz,proten,protxi,protpt,mpp,monpz,monen,monpt,phopz,phopt];
-histoslog_label  = ["protpz","proten",'protxi','protpt','mpp',"monpz","monen","monpt",'phopz','phopt'];
-histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','M(p^{+}p^{-})',"p_{z}(m?)","E(m?)","p_{T}(m?)",'p_{z}(#alpha)','p_{T}(#alpha)'];
-histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)','(GeV)'];
+histoslog        = [protpz,proten,protxi,protpt,mpp,monpz,monen,monpt,phopz,phopt,phoen];
+histoslog_label  = ["protpz","proten",'protxi','protpt','mpp',"monpz","monen","monpt",'phopz','phopt','phoen'];
+histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','M(p^{+}p^{-})',"p_{z}(m?)","E(m?)","p_{T}(m?)",'p_{z}(#alpha)','p_{T}(#alpha)','E(#alpha)'];
+histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)','(GeV)','(GeV)'];
 
 
 #histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_ecay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten, monpz];
@@ -191,6 +192,7 @@ for i in range(len(FILES)):
     monpt.append(TH1D("1D_monpt"+"_"+PDF[i]       , "", 50,0., 1.3))
     phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,4973., 4980.))
     phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 500.))
+    phoen.append(TH1D("1D_phoen"+"_"+PDF[i]       , "", 50,-100., 2000.))
     #DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
     #DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
     #DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
@@ -425,7 +427,8 @@ for i in range(len(FILES)):
 
                 phopz[i].Fill(dp.Pz())
                 phopz[i].Fill(dm.Pz())
-
+                phoen[i].Fill(dm.E())
+                phoen[i].Fill(dp.E())
                 '''
                 invm_decay[i].Fill((dp+dm).M());
                 pt_decay[i].Fill(dp.Pt());
