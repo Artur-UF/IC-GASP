@@ -103,9 +103,9 @@ proten          = [];
 protxi          = []
 protpt          = []
 mpp             = []
-monpz           = []
-monen           = []
-monpt           = []
+mupz           = []
+muen           = []
+mupt           = []
 phopz           = []
 phopt           = []
 phoen           = []
@@ -138,14 +138,14 @@ TGaxis.SetMaxDigits(2)
 
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
-histoslog        = [protpz,proten,protxi,protpt,mpp,monpz,monen,monpt,phopz,phopt,phoen];
-histoslog_label  = ["protpz","proten",'protxi','protpt','mpp',"monpz","monen","monpt",'phopz','phopt','phoen'];
-histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','M(p^{+}p^{-})',"p_{z}(m?)","E(m?)","p_{T}(m?)",'p_{z}(#alpha)','p_{T}(#alpha)','E(#alpha)'];
+histoslog        = [protpz,proten,protxi,protpt,mpp,mupz,muen,mupt,phopz,phopt,phoen];
+histoslog_label  = ["protpz","proten",'protxi','protpt','mpp',"mupz","muen","mupt",'phopz','phopt','phoen'];
+histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','M(p^{+}p^{-})',"p_{z}(#mu)","E(#mu)","p_{T}(#mu)",'p_{z}(#alpha)','p_{T}(#alpha)','E(#alpha)'];
 histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)','(GeV)','(GeV)'];
 
 
-#histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_ecay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten, monpz];
-#histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom","protpz","proten","monpz"];
+#histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_ecay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten, mupz];
+#histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom","protpz","proten","mupz"];
 #histoslog_axis   = ["M(x^{+}x^{-})","p_{T}(x^{#pm})","p_{T}(x^{+}x^{-})","#eta(x^{+}x^{-})","#phi(x^{+},x^{-})","E(x^{+},x^{-})","#Delta p_{T}(x^{+}x^{-})","1-|#Delta#phi(x^{+}x^{-})/#pi|","1-|#Delta#phi(x^{+}x^{-})/#pi|","|#Delta#phi(x^{+}x^{-})|","|#Delta#phi(x^{+}x^{-})|","p_{z}(p)","E(p)","p_{z}(m)"];
 #histoslog_varx   = ["(GeV)","(GeV)","(GeV)","","","(GeV)","(GeV)","","","(deg)","(deg)","(GeV)","(GeV)","(GeV)"];
 
@@ -187,9 +187,9 @@ for i in range(len(FILES)):
     protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,0., .03))
     protpt.append(TH1D("1D_protpt"+"_"+PDF[i]       , "", 50,-0.1, 1.))
     mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,0., 100.)) # pico do superchic em 466. (erro ?)
-    monpz.append(TH1D("1D_monpz"+"_"+PDF[i]       , "", 50,-5000., 5000.))
-    monen.append(TH1D("1D_monen"+"_"+PDF[i]       , "", 50,700., 4000.))
-    monpt.append(TH1D("1D_monpt"+"_"+PDF[i]       , "", 50,0., 1.3))
+    mupz.append(TH1D("1D_mupz"+"_"+PDF[i]       , "", 50,-5000., 5000.))
+    muen.append(TH1D("1D_muen"+"_"+PDF[i]       , "", 50,700., 4000.))
+    mupt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,0., 1.3))
     phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,4973., 4980.))
     phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 500.))
     phoen.append(TH1D("1D_phoen"+"_"+PDF[i]       , "", 50,-100., 2000.))
@@ -269,6 +269,20 @@ for i in range(len(FILES)):
             pz = float(coll[8]);
             en = float(coll[9]);
             dm.SetPxPyPzE(px,py,pz,en);
+        elif coll[0] == '13':
+            dmu = TLorentzVector();
+            px = float(coll[6]);
+            py = float(coll[7]);
+            pz = float(coll[8]);
+            en = float(coll[9]);
+            dmu.SetPxPyPzE(px,py,pz,en);
+        elif coll[0] == '-13':
+            damu = TLorentzVector();
+            px = float(coll[6]);
+            py = float(coll[7]);
+            pz = float(coll[8]);
+            en = float(coll[9]);
+            damu.SetPxPyPzE(px,py,pz,en);
         elif coll[0] == '90':
             dmo = TLorentzVector();
             px = float(coll[6]);
@@ -409,22 +423,23 @@ for i in range(len(FILES)):
                 evPASS += 1;
             elif not cuts:
                 # 1D:
-                protpz[i].Fill(dpp.Pz());
-                protpz[i].Fill(dpm.Pz());
-                proten[i].Fill(dpp.E())
-                proten[i].Fill(dpm.E())
-                protxi[i].Fill(1-(dpp.Pz()/6800))
-                protxi[i].Fill(1-(dpm.Pz()/(-6800)))
-                mpp[i].Fill(sqrt((1-(dpp.Pz()/6800))*(1-(dpm.Pz()/(-6800))))*6800)
-                if i == 0:
+                if(i == 1):
+                    protpz[i].Fill(dpp.Pz());
+                    protpz[i].Fill(dpm.Pz());
+                    proten[i].Fill(dpp.E())
+                    proten[i].Fill(dpm.E())
+                    protxi[i].Fill(1-(dpp.Pz()/7000))
+                    protxi[i].Fill(1-(dpm.Pz()/(-7000)))
+                    mpp[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*7000)
                     protpt[i].Fill(sqrt(dpp.Px()**2 + dpp.Py()**2))
                     protpt[i].Fill(sqrt(dpm.Px()**2 + dpm.Py()**2))
-                    monpz[i].Fill(dmo.Pz())
-                    monen[i].Fill(dmo.E())
-                    monpt[i].Fill(dmo.Pt())
-                    phopt[i].Fill(dp.Pt())
-                    phopt[i].Fill(dm.Pt())
-
+                mupz[i].Fill(dmu.Pz())
+                muen[i].Fill(dmu.E())
+                muen[i].Fill(damu.E())
+                mupt[i].Fill(dmu.Pt())
+                mupt[i].Fill(damu.Pt())
+                phopt[i].Fill(dp.Pt())
+                phopt[i].Fill(dm.Pt())
                 phopz[i].Fill(dp.Pz())
                 phopz[i].Fill(dm.Pz())
                 phoen[i].Fill(dm.E())
