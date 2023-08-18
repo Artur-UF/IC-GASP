@@ -43,7 +43,7 @@ PTCUTLOWER = 0.0; # (NO CUT 0.0)
 
 #processo 3
 FILES   = [
-"evrectest.dat", 'newunweighted_events.lhe'
+"newevrectest.dat", 'newunweighted_events.lhe'
 ]; #FIXME
 
 # EVENT SAMPLE INPUT:
@@ -184,9 +184,9 @@ for i in range(len(FILES)):
     #dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
     protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,4300., 7200.))
     proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,4300., 7200.))
-    protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,0., .03))
+    protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,-0.001,.03))
     protpt.append(TH1D("1D_protpt"+"_"+PDF[i]       , "", 50,-0.1, 1.))
-    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,0., 100.))
+    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,-10., 700.))
     mupz.append(TH1D("1D_mupz"+"_"+PDF[i]       , "", 50,-2500.,2500.))
     muen.append(TH1D("1D_muen"+"_"+PDF[i]       , "", 50,-100., 900.))
     mupt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,-5., 40.0))
@@ -423,16 +423,15 @@ for i in range(len(FILES)):
                 evPASS += 1;
             elif not cuts:
                 # 1D:
-                if(i == 1):
-                    protpz[i].Fill(dpp.Pz());
-                    protpz[i].Fill(dpm.Pz());
-                    proten[i].Fill(dpp.E())
-                    proten[i].Fill(dpm.E())
-                    protxi[i].Fill(1-(dpp.Pz()/7000))
-                    protxi[i].Fill(1-(dpm.Pz()/(-7000)))
-                    mpp[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*7000)
-                    protpt[i].Fill(sqrt(dpp.Px()**2 + dpp.Py()**2))
-                    protpt[i].Fill(sqrt(dpm.Px()**2 + dpm.Py()**2))
+                protpz[i].Fill(dpp.Pz());
+                protpz[i].Fill(dpm.Pz());
+                proten[i].Fill(dpp.E())
+                proten[i].Fill(dpm.E())
+                protxi[i].Fill(1-(dpp.Pz()/7000))
+                protxi[i].Fill(1-(dpm.Pz()/(-7000)))
+                mpp[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*7000)
+                protpt[i].Fill(sqrt(dpp.Px()**2 + dpp.Py()**2))
+                protpt[i].Fill(sqrt(dpm.Px()**2 + dpm.Py()**2))
                 mupz[i].Fill(dmu.Pz())
                 muen[i].Fill(dmu.E())
                 muen[i].Fill(damu.E())
