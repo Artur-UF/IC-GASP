@@ -1,0 +1,18 @@
+INFO: Combining Events 
+lpp1 '2' not compatible with pdlabel1 'nn23lo1'. Change pdlabel1 to edff
+lpp2 '2' not compatible with pdlabel2 'nn23lo1'. Change pdlabel2 to edff
+  === Results Summary for run: run_06 tag: tag_1 ===
+
+     Cross-section :   0.9987 +- 0.002905 pb
+     Nb of events :  10000
+ 
+INFO: No version of lhapdf. Can not run systematics computation 
+store_events
+INFO: Storing parton level results 
+INFO: End Parton 
+reweight -from_cards
+decay_events -from_cards
+INFO: storing files of previous run 
+INFO: Done 
+quit
+INFO:  
