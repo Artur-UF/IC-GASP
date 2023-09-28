@@ -17,8 +17,8 @@ with open('amostras/'+path, 'r+') as f:
     inicio = linhas.index('<event>\n')	
 
 # Aqui serve pra inserir os dados
-pzini = 7000		# pz inicial dos protons
-eini = 7000		# energia inicial dos protons
+pzini = 7000            # pz inicial dos protons
+eini = 7000             # energia inicial dos protons
 
 # Massa de repouso do proton: 0.9382720882E+00
 

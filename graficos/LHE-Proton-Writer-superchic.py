@@ -30,13 +30,15 @@ with open(new, 'w') as new:
             j = 0
             while linhas[i+j] != ' </event>\n':
                 if linhas[i+j].split()[0] == '22':
+                    px = f'{-eval(linhas[i+j].split()[6]):.9e}' if -eval(linhas[i+j].split()[6]) < 0 else f'+{-eval(linhas[i+j].split()[6]):.9e}'
+                    py = f'{-eval(linhas[i+j].split()[7]):.9e}' if -eval(linhas[i+j].split()[7]) < 0 else f'+{-eval(linhas[i+j].split()[7]):.9e}'
                     pzf = eval(linhas[i+j].split()[8])
                     sign = (pzf/abs(pzf))
                     pzp = pzini*sign - pzf
                     ef = eval(linhas[i+j].split()[9])
                     ep = eini - ef
-                    if sign > 0: linhas.insert(i+j+2, ' '*13+f'2212{" "*8}1    0    0    0    0 +{0:.9e} +{0:.9e} +{pzp:.9e}  {ep:.9e}  0.938272088E+00 0. 1.\n')
-                    else: linhas.insert(i+j+2, ' '*13+f'2212{" "*8}1    0    0    0    0 -{0:.9e} -{0:.9e} {pzp:.9e}  {ep:.9e}  0.938272088E+00 0. -1.\n')
+                    if sign > 0: linhas.insert(i+j+2, ' '*13+f'2212{" "*8}1    0    0    0    0 {px} {py} +{pzp:.9e}  {ep:.9e}  0.938272088E+00 0. 1.\n')
+                    else: linhas.insert(i+j+2, ' '*13+f'2212{" "*8}1    0    0    0    0 {px} {py} {pzp:.9e}  {ep:.9e}  0.938272088E+00 0. -1.\n')
                 j += 1
         i += 1
         if i == len(linhas): break

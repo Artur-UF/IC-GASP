@@ -21,7 +21,7 @@ JOB     = "histos";
 PDF     = [ 'superchic', 'MadGraph', 'FPMC', 'LPAIR']; #FIXME
 scale   = False; #bug, use False
 cuts    = False;
-setLog  = False;
+setLog  = True;
 filled  = False;
 stacked = False;
 data    = False;
@@ -102,11 +102,13 @@ protpz          = [];
 proten          = [];
 protxi          = []
 protpt          = []
+proteta         = []
 mpp             = []
-mupz           = []
-muen           = []
-mupt           = []
+mupz            = []
+muen            = []
+mupt            = []
 ivm_mu          = []
+mueta           = []
 phopz           = []
 phopt           = []
 phoen           = []
@@ -139,10 +141,10 @@ TGaxis.SetMaxDigits(2)
 
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
-histoslog        = [protpz,proten,protxi,protpt,mpp,mupz,muen,mupt,ivm_mu,phopz,phopt,phoen];
-histoslog_label  = ["protpz","proten",'protxi','protpt','mpp',"mupz","muen","mupt",'ivm_mu','phopz','phopt','phoen'];
-histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','M(p^{+}p^{-})',"p_{z}(#mu)","E(#mu)","p_{T}(#mu)",'M(#mu^{+}#mu^{-})','p_{z}(#alpha)','p_{T}(#alpha)','E(#alpha)'];
-histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)','(GeV)','(GeV)','(GeV)'];
+histoslog        = [protpz,proten,protxi,protpt,proteta,mpp,mupz,muen,mupt,ivm_mu,mueta,phopz,phopt,phoen];
+histoslog_label  = ["protpz","proten",'protxi','protpt','proteta','mpp',"mupz","muen","mupt",'ivm_mu','mueta','phopz','phopt','phoen'];
+histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','#eta(p^{+}p^{-})','M(p^{+}p^{-})',"p_{z}(#mu)","E(#mu)","p_{T}(#mu)",'M(#mu^{+}#mu^{-})','#eta(#mu^{+}#mu^{-})','p_{z}(#alpha)','p_{T}(#alpha)','E(#alpha)'];
+histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)','','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)','','(GeV)','(GeV)','(GeV)'];
 
 
 #histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_ecay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten, mupz];
@@ -187,11 +189,13 @@ for i in range(len(FILES)):
     proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,4300., 7200.))
     protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,-0.01,0.05))
     protpt.append(TH1D("1D_protpt"+"_"+PDF[i]       , "", 50,-0.1, 1.))
-    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,-20., 700.))
+    proteta.append(TH1D("1D_proteta"+"_"+PDF[i]       , "", 50,-20., 20.))
+    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,-25., 1500.))
     mupz.append(TH1D("1D_mupz"+"_"+PDF[i]       , "", 50,-2500.,2500.))
     muen.append(TH1D("1D_muen"+"_"+PDF[i]       , "", 50,-100., 900.))
     mupt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,-5., 40.0))
-    ivm_mu.append(TH1D("1D_ivm_mu"+"_"+PDF[i]       , "", 50,0., 50.0))
+    ivm_mu.append(TH1D("1D_ivm_mu"+"_"+PDF[i]       , "", 50,-25., 1500.0))
+    mueta.append(TH1D("1D_mueta"+"_"+PDF[i]       , "", 50,-15., 15.))
     phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,4973., 4980.))
     phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 500.))
     phoen.append(TH1D("1D_phoen"+"_"+PDF[i]       , "", 50,-100., 2000.))
@@ -302,6 +306,7 @@ for i in range(len(FILES)):
             pz = float(coll[8]);
             en = float(coll[9]);
             dpp.SetPxPyPzE(px,py,pz,en);
+            FLAG_M = True if abs(dpp.Pt()) > 0 else False
         elif coll[0] == '2212' and coll[1] == '1' and eval(coll[8]) < 0 and abs(eval(coll[8])) < 7000:
             dpm = TLorentzVector();
             px = float(coll[6]);
@@ -309,6 +314,7 @@ for i in range(len(FILES)):
             pz = float(coll[8]);
             en = float(coll[9]);
             dpm.SetPxPyPzE(px,py,pz,en);
+            FLAG_M = True if abs(dpm.Pt()) > 0 else False
         # CLOSE EVENT AND FILL HISTOGRAMS:
         #print ("OI 2");
         elif coll[0] == "</event>":
@@ -435,9 +441,15 @@ for i in range(len(FILES)):
                 proten[i].Fill(dpm.E())
                 protxi[i].Fill(1-(dpp.Pz()/7000))
                 protxi[i].Fill(1-(dpm.Pz()/(-7000)))
-                mpp[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*7000)
-                protpt[i].Fill(sqrt(dpp.Px()**2 + dpp.Py()**2))
-                protpt[i].Fill(sqrt(dpm.Px()**2 + dpm.Py()**2))
+                if FLAG_M:
+                    mpp[i].Fill(dpp.M())
+                    mpp[i].Fill(dpm.M())
+                else:
+                    mpp[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*7000)
+                protpt[i].Fill(dpp.Pt())
+                protpt[i].Fill(dpm.Pt())
+                proteta[i].Fill(dpp.Eta())
+                proteta[i].Fill(dpm.Eta())
                 #-------------------------Medidas dos Múons
                 mupz[i].Fill(dmu.Pz())
                 muen[i].Fill(dmu.E())
@@ -445,6 +457,8 @@ for i in range(len(FILES)):
                 mupt[i].Fill(dmu.Pt())
                 mupt[i].Fill(damu.Pt())
                 ivm_mu[i].Fill((dmu+damu).M())
+                mueta[i].Fill(dmu.Eta())
+                mueta[i].Fill(damu.Eta())
                 #-------------------------Medidas dos fótons
                 phopt[i].Fill(dp.Pt())
                 phopt[i].Fill(dm.Pt())
