@@ -1,4 +1,5 @@
 import sys
+from ROOT import *
 '''
     Dependendo da origem do gerador de eventos eles tem espaçamento e precisão diferentes
 '''
@@ -22,7 +23,7 @@ eini = 7000		# energia inicial dos protons
 
 # Massa de repouso do proton: 0.9382720882E+00
 
-
+lvector = TLorentzVector()
 with open(new, 'w') as new:
     i = 0
     while True:
@@ -30,12 +31,13 @@ with open(new, 'w') as new:
             j = 0
             while linhas[i+j] != ' </event>\n':
                 if linhas[i+j].split()[0] == '22':
-                    px = f'{-eval(linhas[i+j].split()[6]):.9e}' if -eval(linhas[i+j].split()[6]) < 0 else f'+{-eval(linhas[i+j].split()[6]):.9e}'
-                    py = f'{-eval(linhas[i+j].split()[7]):.9e}' if -eval(linhas[i+j].split()[7]) < 0 else f'+{-eval(linhas[i+j].split()[7]):.9e}'
-                    pzf = eval(linhas[i+j].split()[8])
+                    linha = linhas[i+j].split()
+                    px = f'{-eval(linhas[i+j].split()[6]):.9e}' if -eval(linha[6]) < 0 else f'+{-eval(linhas[i+j].split()[6]):.9e}'
+                    py = f'{-eval(linhas[i+j].split()[7]):.9e}' if -eval(linha[7]) < 0 else f'+{-eval(linhas[i+j].split()[7]):.9e}'
+                    pzf = eval(linha[8])
                     sign = (pzf/abs(pzf))
                     pzp = pzini*sign - pzf
-                    ef = eval(linhas[i+j].split()[9])
+                    ef = eval(linha[9])
                     ep = eini - ef
                     if sign > 0: linhas.insert(i+j+2, ' '*13+f'2212{" "*8}1    0    0    0    0 {px} {py} +{pzp:.9e}  {ep:.9e}  0.938272088E+00 0. 1.\n')
                     else: linhas.insert(i+j+2, ' '*13+f'2212{" "*8}1    0    0    0    0 {px} {py} {pzp:.9e}  {ep:.9e}  0.938272088E+00 0. -1.\n')
@@ -43,5 +45,15 @@ with open(new, 'w') as new:
         i += 1
         if i == len(linhas): break
     for line in linhas:
+        linha = line.strip().split()
+        if(len(linha) > 1 and linha[0] == '2212'):
+            lvector.SetPxPyPzE(float(linha[6]), float(linha[7]), float(linha[8]), float(linha[9]))
+            print(f'M(p) = {lvector.M()}')
+        if(len(linha) > 1 and linha[0] == '13'):
+            lvector.SetPxPyPzE(float(linha[6]), float(linha[7]), float(linha[8]), float(linha[9]))
+            print(f'M(\u03BC+) = {lvector.M()}')
+        if(len(linha) > 1 and linha[0] == '-13'):
+            lvector.SetPxPyPzE(float(linha[6]), float(linha[7]), float(linha[8]), float(linha[9]))
+            print(f'M(\u03BC) = {lvector.M()}\n*-*-*-*-*-*-*-*-*-*-*')
         new.write(line[1:])
 

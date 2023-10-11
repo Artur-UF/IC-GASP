@@ -125,22 +125,26 @@ DDDetacost	= [];
 DDDmllcost	= [];
 DDDth1th2	= [];
 # 2D:
-DDpt1pt2	= [];
-DDphi1phi2	= [];
-DDptsumphi	= [];
-DDpt1ptsum	= [];
-DDpt2ptsum	= [];
-DDmllptsum	= [];
-DDetatheta	= [];
-DDetacost	= [];
-DDmllcost	= [];
-DDth1th2	= [];
+#DDpt1pt2	= [];
+#DDphi1phi2	= [];
+#DDptsumphi	= [];
+#DDpt1ptsum	= [];
+#DDpt2ptsum	= [];
+#DDmllptsum	= [];
+#DDetatheta	= [];
+#DDetacost	= [];
+#DDmllcost	= [];
+#DDth1th2	= [];
+DDmppmmumu      = []
+DDchipchimu     = []
 
 # SETTING THE NUMBER OF DIGITS ON AXIS
 TGaxis.SetMaxDigits(2)
 
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
+
+# 1D
 histoslog        = [protpz,proten,protxi,protpt,proteta,mpp,mupz,muen,mupt,ivm_mu,mueta,phopz,phopt,phoen];
 histoslog_label  = ["protpz","proten",'protxi','protpt','proteta','mpp',"mupz","muen","mupt",'ivm_mu','mueta','phopz','phopt','phoen'];
 histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','#eta(p^{+}p^{-})','M(p^{+}p^{-})',"p_{z}(#mu)","E(#mu)","p_{T}(#mu)",'M(#mu^{+}#mu^{-})','#eta(#mu^{+}#mu^{-})','p_{z}(#alpha)','p_{T}(#alpha)','E(#alpha)'];
@@ -160,12 +164,20 @@ legoslog_varz    = ["(nb/GeV^{2})","(nb)","(nb/GeV*deg)","(nb/GeV^{2})","(nb/GeV
 legoslog_varx    = ["(GeV)","(deg)","(GeV)","(GeV)","(GeV)","(GeV)","","","","(GeV)","(deg)"];
 legoslog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)"];
 
-DDlog         = [DDpt1pt2,DDphi1phi2,DDptsumphi,DDpt1ptsum,DDpt2ptsum,DDmllptsum,DDetatheta,DDetacost,DDmllcost,DDth1th2];
-DDlog_label   = ["2Dpt1pt2","2Dphi1phi2","2Dptsumphi","2Dpt1ptsum","2Dpt2ptsum","2Dmllptsum","2Detatheta","2Detacost","2Dmllcost","2Dth1th2"];
-DDlog_xaxis   = ["p_{T}(x^{+})","#phi(x^{+})","p_{T}(x^{+}x^{-})","p_{T}(x^{+})","p_{T}(x^{-})","M(x^{+}x^{-})","#eta(x^{+}x^{-})","#eta(x^{+}x^{-})","M(x^{+}x^{-})","#theta_{1}"];
-DDlog_yaxis   = ["p_{T}(x^{-})","#phi(x^{-})","#phi(x^{#pm})","p_{T}(x^{+}x^{-})","p_{T}(x^{+}x^{-})","p_{T}(x^{+}x^{-})","#theta(x^{+}x^{-})","cos#theta(x^{+}x^{-})","cos#theta(x^{+}x^{-})","#theta_{2}"];
-DDlog_varx    = ["(GeV)","(deg)","(GeV)","(GeV)","(GeV)","(GeV)","","","(GeV)","(deg)"];
-DDlog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)"];
+# 2D
+DDlog         = [DDmppmmumu,DDchipchimu] 
+DDlog_label   = ["2Dmppmmumu",'2Dchipchimu'];
+DDlog_xaxis   = ["M(p^{+}p^{-})",'#chi(p^{+})']
+DDlog_yaxis   = ["M(#mu^{+}#mu^{-})",'#chi(#mu^{+})']
+DDlog_varx    = ["(GeV)",'']
+DDlog_vary    = ["(GeV)",'']
+
+#DDlog         = [DDpt1pt2,DDphi1phi2,DDptsumphi,DDpt1ptsum,DDpt2ptsum,DDmllptsum,DDetatheta,DDetacost,DDmllcost,DDth1th2];
+#DDlog_label   = ["2Dpt1pt2","2Dphi1phi2","2Dptsumphi","2Dpt1ptsum","2Dpt2ptsum","2Dmllptsum","2Detatheta","2Detacost","2Dmllcost","2Dth1th2"];
+#DDlog_xaxis   = ["p_{T}(x^{+})","#phi(x^{+})","p_{T}(x^{+}x^{-})","p_{T}(x^{+})","p_{T}(x^{-})","M(x^{+}x^{-})","#eta(x^{+}x^{-})","#eta(x^{+}x^{-})","M(x^{+}x^{-})","#theta_{1}"];
+#DDlog_yaxis   = ["p_{T}(x^{-})","#phi(x^{-})","#phi(x^{#pm})","p_{T}(x^{+}x^{-})","p_{T}(x^{+}x^{-})","p_{T}(x^{+}x^{-})","#theta(x^{+}x^{-})","cos#theta(x^{+}x^{-})","cos#theta(x^{+}x^{-})","#theta_{2}"];
+#DDlog_varx    = ["(GeV)","(deg)","(GeV)","(GeV)","(GeV)","(GeV)","","","(GeV)","(deg)"];
+#DDlog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)"];
 
 # STARTING THE LOOP OVER FILES:
 for i in range(len(FILES)):
@@ -185,12 +197,14 @@ for i in range(len(FILES)):
     #acop_zoom.append(TH1D("1D_acopz"+"_"+PDF[i]     , "", 50,  -.01,   1.));
     #dphi.append(TH1D("1D_dphi"+"_"+PDF[i]           , "", 50,  0., 181.));
     #dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
+
+    # 1D
     protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,4300., 7200.))
     proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,4300., 7200.))
     protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,-0.01,0.05))
     protpt.append(TH1D("1D_protpt"+"_"+PDF[i]       , "", 50,-0.1, 1.))
     proteta.append(TH1D("1D_proteta"+"_"+PDF[i]       , "", 50,-20., 20.))
-    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,-25., 1500.))
+    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,0., 1500.))
     mupz.append(TH1D("1D_mupz"+"_"+PDF[i]       , "", 50,-2500.,2500.))
     muen.append(TH1D("1D_muen"+"_"+PDF[i]       , "", 50,-100., 900.))
     mupt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,-5., 40.0))
@@ -213,6 +227,10 @@ for i in range(len(FILES)):
     #DDDetacost.append(TH2D("3D_eta_cost_"+PDF[i]    , "", 50,-15.,  15., 50,-1.,   1.));
     #DDDmllcost.append(TH2D("3D_mll_cost_"+PDF[i]    , "", 50,  0., 300., 50,-1.,   1.));
     #DDDth1th2.append(TH2D("3D_th1_th2_"+PDF[i]      , "", 45,  0., 180., 45, 0., 180.));
+
+    # 2D
+    DDmppmmumu.append(TH2D('2D_mpp_mmumu_'+PDF[i]       , '', 50, 0., 1400., 50, 0., 1400.))
+    DDchipchimu.append(TH2D('2D_chip_chimu_'+PDF[i]       , '', 50, 0., 1., 50, 0., 1.))
     #DDpt1pt2.append(TH2D("2D_pt1_pt2_"+PDF[i]       , "", 50,  0.,  60., 50, 0.,  60.));
     #DDphi1phi2.append(TH2D("2D_phi1_phi2_"+PDF[i]   , "", 45,  0., 180., 45, 0., 180.));
     #DDptsumphi.append(TH2D("2D_ptsum_phi_"+PDF[i] 	, "", 50,  0., 120., 45, 0., 180.));
@@ -306,7 +324,6 @@ for i in range(len(FILES)):
             pz = float(coll[8]);
             en = float(coll[9]);
             dpp.SetPxPyPzE(px,py,pz,en);
-            FLAG_M = True if abs(dpp.Pt()) > 0 else False
         elif coll[0] == '2212' and coll[1] == '1' and eval(coll[8]) < 0 and abs(eval(coll[8])) < 7000:
             dpm = TLorentzVector();
             px = float(coll[6]);
@@ -314,9 +331,7 @@ for i in range(len(FILES)):
             pz = float(coll[8]);
             en = float(coll[9]);
             dpm.SetPxPyPzE(px,py,pz,en);
-            FLAG_M = True if abs(dpm.Pt()) > 0 else False
         # CLOSE EVENT AND FILL HISTOGRAMS:
-        #print ("OI 2");
         elif coll[0] == "</event>":
             # KINEMATICS OF DECAY PRODUCTS:
             if ( cuts and INNER
@@ -441,11 +456,7 @@ for i in range(len(FILES)):
                 proten[i].Fill(dpm.E())
                 protxi[i].Fill(1-(dpp.Pz()/7000))
                 protxi[i].Fill(1-(dpm.Pz()/(-7000)))
-                if FLAG_M:
-                    mpp[i].Fill(dpp.M())
-                    mpp[i].Fill(dpm.M())
-                else:
-                    mpp[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*7000)
+                mpp[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*14000)
                 protpt[i].Fill(dpp.Pt())
                 protpt[i].Fill(dpm.Pt())
                 proteta[i].Fill(dpp.Eta())
@@ -502,8 +513,11 @@ for i in range(len(FILES)):
                 DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
                 DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
                 DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+                '''
                 # 2D:
-                DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
+                DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*14000, (dmu+damu).M())
+                DDchipchimu[i].Fill(1-(dpp.Pz()/7000), 1-(dmu.Pz()/7000))
+                '''DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
                 DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
                 DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
                 DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
@@ -615,3 +629,12 @@ for l in range(len(histoslog)):
         dataonly.SetLineStyle(2);
         dataonly.SetFillColor(0);
         dataonly.SaveAs(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+histoslog_label[l]+".root");
+# END loop over plots in log scale
+
+FILEROOT.Write();
+
+#####################################################################
+#
+# C'ESTI FINI
+#
+#####################################################################
