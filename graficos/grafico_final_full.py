@@ -21,7 +21,7 @@ JOB     = "histos";
 PDF     = [ 'superchic', 'MadGraph', 'FPMC', 'LPAIR']; #FIXME
 scale   = False; #bug, use False
 cuts    = False;
-setLog  = True;
+setLog  = False;
 filled  = False;
 stacked = False;
 data    = False;
@@ -137,6 +137,7 @@ DDDth1th2	= [];
 #DDth1th2	= [];
 DDmppmmumu      = []
 DDchipchimu     = []
+DDksipksimu     = []
 
 # SETTING THE NUMBER OF DIGITS ON AXIS
 TGaxis.SetMaxDigits(2)
@@ -165,12 +166,12 @@ legoslog_varx    = ["(GeV)","(deg)","(GeV)","(GeV)","(GeV)","(GeV)","","","","(G
 legoslog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)"];
 
 # 2D
-DDlog         = [DDmppmmumu,DDchipchimu] 
-DDlog_label   = ["2Dmppmmumu",'2Dchipchimu'];
-DDlog_xaxis   = ["M(p^{+}p^{-})",'#chi(p^{+})']
-DDlog_yaxis   = ["M(#mu^{+}#mu^{-})",'#chi(#mu^{+})']
-DDlog_varx    = ["(GeV)",'']
-DDlog_vary    = ["(GeV)",'']
+DDlog         = [DDmppmmumu,DDchipchimu,DDksipksimu] 
+DDlog_label   = ["2Dmppmmumu",'2Dchipchimu','2Dksipksimu'];
+DDlog_xaxis   = ["M(p^{+}p^{-})",'#chi(p^{+})','#ksi(p^{+}p^{-})']
+DDlog_yaxis   = ["M(#mu^{+}#mu^{-})",'#chi(#mu^{+})','#ksi(#mu^{+}#mu^{-})']
+DDlog_varx    = ["(GeV)",'','']
+DDlog_vary    = ["(GeV)",'','']
 
 #DDlog         = [DDpt1pt2,DDphi1phi2,DDptsumphi,DDpt1ptsum,DDpt2ptsum,DDmllptsum,DDetatheta,DDetacost,DDmllcost,DDth1th2];
 #DDlog_label   = ["2Dpt1pt2","2Dphi1phi2","2Dptsumphi","2Dpt1ptsum","2Dpt2ptsum","2Dmllptsum","2Detatheta","2Detacost","2Dmllcost","2Dth1th2"];
@@ -231,6 +232,7 @@ for i in range(len(FILES)):
     # 2D
     DDmppmmumu.append(TH2D('2D_mpp_mmumu_'+PDF[i]       , '', 50, 0., 1400., 50, 0., 1400.))
     DDchipchimu.append(TH2D('2D_chip_chimu_'+PDF[i]       , '', 50, 0., 1., 50, 0., 1.))
+    DDksipksimu.append(TH2D('2D_ksip_ksimu_'+PDF[i]     , '', 50, 0., 5000., 50, 0., 5000.))
     #DDpt1pt2.append(TH2D("2D_pt1_pt2_"+PDF[i]       , "", 50,  0.,  60., 50, 0.,  60.));
     #DDphi1phi2.append(TH2D("2D_phi1_phi2_"+PDF[i]   , "", 45,  0., 180., 45, 0., 180.));
     #DDptsumphi.append(TH2D("2D_ptsum_phi_"+PDF[i] 	, "", 50,  0., 120., 45, 0., 180.));
@@ -517,6 +519,8 @@ for i in range(len(FILES)):
                 # 2D:
                 DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*14000, (dmu+damu).M())
                 DDchipchimu[i].Fill(1-(dpp.Pz()/7000), 1-(dmu.Pz()/7000))
+                if dpp.Pt() != 0 and dpm.Pt() != 0:
+                    DDksipksimu[i].Fill((1/14)*(dpp.Pt()*exp(dpp.Eta())+dpm.Pt()*exp(dpm.Eta())), (1/14)*(dmu.Pt()*exp(dmu.Eta())+damu.Pt()*exp(damu.Eta())))
                 '''DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
                 DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
                 DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
