@@ -1,7 +1,7 @@
 import sys
 from ROOT import *
 '''
-    Dependendo da origem do gerador de eventos eles tem espaçamento e precisão diferentes
+Writes the protons into an LHE file from Superchic 
 '''
 # Ele recebe o arquivo como argumento depois do python3
 if len(sys.argv) > 1:

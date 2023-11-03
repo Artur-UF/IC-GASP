@@ -47,8 +47,9 @@ FILES   = [
 #FIXME
 
 # EVENT SAMPLE INPUT:
-Nevt     = 10000; #FIXME
-EVTINPUT = str(int(Nevt/1000))+"k";
+Nevt    = 10000; #FIXME
+EVTINPUT= str(int(Nevt/1000))+"k";
+SQRTS   = 14000         # in GeV
 
 #####################################################################
 
@@ -86,18 +87,6 @@ for l in range(len(FILE_TYPES)):
 # ARRAYS FOR EACH TYPE OF DISTRIBUTIONS:
 #
 # 1D:
-'''invm_decay	= [];
-pt_decay	= [];
-ptsum_decay	= [];
-eta_decay	= [];
-phi_decay	= [];
-E_decay		= [];
-dpt_decay       = [];
-acop            = [];
-acop_zoom       = [];
-dataonly        = [];
-dphi            = [];
-dphi_zoom       = [];'''
 protpz          = [];
 proten          = [];
 protxi          = []
@@ -112,7 +101,8 @@ mueta           = []
 phopz           = []
 phopt           = []
 phoen           = []
-# 3D:
+
+'''# 3D:
 DDDpt1pt2	= [];
 DDDphi1phi2	= [];
 DDDptsumphi	= [];
@@ -123,21 +113,11 @@ DDDetaptsum	= [];
 DDDetatheta	= [];
 DDDetacost	= [];
 DDDmllcost	= [];
-DDDth1th2	= [];
+DDDth1th2	= [];'''
+
 # 2D:
-#DDpt1pt2	= [];
-#DDphi1phi2	= [];
-#DDptsumphi	= [];
-#DDpt1ptsum	= [];
-#DDpt2ptsum	= [];
-#DDmllptsum	= [];
-#DDetatheta	= [];
-#DDetacost	= [];
-#DDmllcost	= [];
-#DDth1th2	= [];
 DDmppmmumu      = []
-DDchipchimu     = []
-DDksipksimu     = []
+DDxipximu     = []
 
 # SETTING THE NUMBER OF DIGITS ON AXIS
 TGaxis.SetMaxDigits(2)
@@ -151,34 +131,23 @@ histoslog_label  = ["protpz","proten",'protxi','protpt','proteta','mpp',"mupz","
 histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','#eta(p^{+}p^{-})','M(p^{+}p^{-})',"p_{z}(#mu)","E(#mu)","p_{T}(#mu)",'M(#mu^{+}#mu^{-})','#eta(#mu^{+}#mu^{-})','p_{z}(#alpha)','p_{T}(#alpha)','E(#alpha)'];
 histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)','','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)','','(GeV)','(GeV)','(GeV)'];
 
-
-#histoslog        = [invm_decay,pt_decay,ptsum_decay,eta_ecay,phi_decay,E_decay,dpt_decay,acop,acop_zoom,dphi,dphi_zoom,protpz,proten, mupz];
-#histoslog_label  = ["invm_decay","pt_decay","ptsum_decay","eta_decay","phi_decay","E_decay","dpt_decay","acop","acop_zoom","dphi","dphi_zoom","protpz","proten","mupz"];
-#histoslog_axis   = ["M(x^{+}x^{-})","p_{T}(x^{#pm})","p_{T}(x^{+}x^{-})","#eta(x^{+}x^{-})","#phi(x^{+},x^{-})","E(x^{+},x^{-})","#Delta p_{T}(x^{+}x^{-})","1-|#Delta#phi(x^{+}x^{-})/#pi|","1-|#Delta#phi(x^{+}x^{-})/#pi|","|#Delta#phi(x^{+}x^{-})|","|#Delta#phi(x^{+}x^{-})|","p_{z}(p)","E(p)","p_{z}(m)"];
-#histoslog_varx   = ["(GeV)","(GeV)","(GeV)","","","(GeV)","(GeV)","","","(deg)","(deg)","(GeV)","(GeV)","(GeV)"];
-
+'''# 3D
 legoslog         = [DDDpt1pt2,DDDphi1phi2,DDDptsumphi,DDDpt1ptsum,DDDpt2ptsum,DDDmllptsum,DDDetaptsum,DDDetatheta,DDDetacost,DDDmllcost,DDDth1th2];
 legoslog_label   = ["3Dpt1pt2","3Dphi1phi2","3Dptsumphi","3Dpt1ptsum","3Dpt2ptsum","3Dmllptsum","3Detaptsum","3Detatheta","3Detacost","3Dmllcost","3Dth1th2"];
 legoslog_xaxis   = ["p_{T}(x^{+})","#phi(x^{+})","p_{T}(x^{+}x^{-})","p_{T}(x^{#pm})","p_{T}(x^{#pm})","M(x^{+}x^{-})","#eta(x^{+}x^{-})","#eta(x^{+}x^{-})","#eta(x^{+}x^{-})","M(x^{+}x^{-})","#theta_{1}"];
 legoslog_yaxis   = ["p_{T}(x^{-})","#phi(x^{-})","#phi(x^{#pm})","p_{T}(x^{+}x^{-})","p_{T}(x^{+}x^{-})","p_{T}(x^{+}x^{-})","p_{T}(x^{+}x^{-})","#theta(x^{+}x^{-})","cos#theta(x^{+}x^{-})","cos#theta(x^{+}x^{-})","#theta_{2}"];
 legoslog_varz    = ["(nb/GeV^{2})","(nb)","(nb/GeV*deg)","(nb/GeV^{2})","(nb/GeV^{2})","(nb/GeV^{2})","(nb/GeV^{2})","(nb/deg)","(nb)","(nb/GeV)","(nb)"];
 legoslog_varx    = ["(GeV)","(deg)","(GeV)","(GeV)","(GeV)","(GeV)","","","","(GeV)","(deg)"];
-legoslog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)"];
+legoslog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)"];'''
 
 # 2D
-DDlog         = [DDmppmmumu,DDchipchimu,DDksipksimu] 
-DDlog_label   = ["2Dmppmmumu",'2Dchipchimu','2Dksipksimu'];
-DDlog_xaxis   = ["M(p^{+}p^{-})",'#chi(p^{+})','#ksi(p^{+}p^{-})']
-DDlog_yaxis   = ["M(#mu^{+}#mu^{-})",'#chi(#mu^{+})','#ksi(#mu^{+}#mu^{-})']
-DDlog_varx    = ["(GeV)",'','']
-DDlog_vary    = ["(GeV)",'','']
+DDlog         = [DDmppmmumu,DDxipximu] 
+DDlog_label   = ["2Dmppmmumu",'2Dxipximu'];
+DDlog_xaxis   = ["M(p^{+}p^{-})",'#xi(p^{+}p^{-})']
+DDlog_yaxis   = ["M(#mu^{+}#mu^{-})",'#xi(#mu^{+}#mu^{-})']
+DDlog_varx    = ["(GeV)",'']
+DDlog_vary    = ["(GeV)",'']
 
-#DDlog         = [DDpt1pt2,DDphi1phi2,DDptsumphi,DDpt1ptsum,DDpt2ptsum,DDmllptsum,DDetatheta,DDetacost,DDmllcost,DDth1th2];
-#DDlog_label   = ["2Dpt1pt2","2Dphi1phi2","2Dptsumphi","2Dpt1ptsum","2Dpt2ptsum","2Dmllptsum","2Detatheta","2Detacost","2Dmllcost","2Dth1th2"];
-#DDlog_xaxis   = ["p_{T}(x^{+})","#phi(x^{+})","p_{T}(x^{+}x^{-})","p_{T}(x^{+})","p_{T}(x^{-})","M(x^{+}x^{-})","#eta(x^{+}x^{-})","#eta(x^{+}x^{-})","M(x^{+}x^{-})","#theta_{1}"];
-#DDlog_yaxis   = ["p_{T}(x^{-})","#phi(x^{-})","#phi(x^{#pm})","p_{T}(x^{+}x^{-})","p_{T}(x^{+}x^{-})","p_{T}(x^{+}x^{-})","#theta(x^{+}x^{-})","cos#theta(x^{+}x^{-})","cos#theta(x^{+}x^{-})","#theta_{2}"];
-#DDlog_varx    = ["(GeV)","(deg)","(GeV)","(GeV)","(GeV)","(GeV)","","","(GeV)","(deg)"];
-#DDlog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)"];
 
 # STARTING THE LOOP OVER FILES:
 for i in range(len(FILES)):
@@ -187,17 +156,6 @@ for i in range(len(FILES)):
 
     # SORTING THE DISTRIBUTIONS IN THE ARRAYS FOR EACH FILE:
     # EACH ARRAYS IS FORMATTED LIKE: array[] = [plots_file1, plots_file2, plots_file3, ...
-    #invm_decay.append(TH1D("1D_invm_decay"+"_"+PDF[i],"", 50,  20., 350.));
-    #pt_decay.append(TH1D("1D_pt_decay"+"_"+PDF[i]	, "", 50,  0., 200.));
-    #ptsum_decay.append(TH1D("1D_ptsum_decay"+"_"+PDF[i], "", 50,  0., 360.));
-    #eta_decay.append(TH1D("1D_eta_decay"+"_"+PDF[i]	, "", 50,-10.,  10.));
-    #phi_decay.append(TH1D("1D_phi_decay"+"_"+PDF[i]	, "", 10, -4.,   4.));
-    #E_decay.append(TH1D("1D_E_decay"+"_"+PDF[i]	, "", 50,  0., 250.));
-    #dpt_decay.append(TH1D("1D_dpt_decay"+"_"+PDF[i] , "", 50,  0.,   0.1));
-    #acop.append(TH1D("1D_acop"+"_"+PDF[i]           , "", 50,  0.,  10.));
-    #acop_zoom.append(TH1D("1D_acopz"+"_"+PDF[i]     , "", 50,  -.01,   1.));
-    #dphi.append(TH1D("1D_dphi"+"_"+PDF[i]           , "", 50,  0., 181.));
-    #dphi_zoom.append(TH1D("1D_dphiz"+"_"+PDF[i]     , "", 50,175., 180.1));
 
     # 1D
     protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,4300., 7200.))
@@ -217,6 +175,12 @@ for i in range(len(FILES)):
     #mopz.append(TH1D("1D_mupz"+"_"+PDF[i]       , "", 50,-2500.,2500.))
     #moen.append(TH1D("1D_muen"+"_"+PDF[i]       , "", 50,-100., 900.))
     #mopt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,-5., 40.0))
+
+    # 2D
+    DDmppmmumu.append(TH2D('2D_mpp_mmumu_'+PDF[i]       , '', 50, 0., 1400., 50, 0., 1400.))
+    DDxipximu.append(TH2D('2D_xip_ximu_'+PDF[i]     , '', 50, 0., 1., 50, 0., 1.))
+
+    # 3D
     #DDDpt1pt2.append(TH2D("3D_pt1_pt2_"+PDF[i]      , "", 50,  0.,  70., 50, 0.,  70.));
     #DDDphi1phi2.append(TH2D("3D_phi1_phi2_"+PDF[i]  , "", 45,  0., 180., 45, 0., 180.));
     #DDDptsumphi.append(TH2D("3D_ptsum_phi_"+PDF[i]	, "", 50,  0., 160., 45, 0., 180.));
@@ -229,33 +193,13 @@ for i in range(len(FILES)):
     #DDDmllcost.append(TH2D("3D_mll_cost_"+PDF[i]    , "", 50,  0., 300., 50,-1.,   1.));
     #DDDth1th2.append(TH2D("3D_th1_th2_"+PDF[i]      , "", 45,  0., 180., 45, 0., 180.));
 
-    # 2D
-    DDmppmmumu.append(TH2D('2D_mpp_mmumu_'+PDF[i]       , '', 50, 0., 1400., 50, 0., 1400.))
-    DDchipchimu.append(TH2D('2D_chip_chimu_'+PDF[i]       , '', 50, 0., 1., 50, 0., 1.))
-    DDksipksimu.append(TH2D('2D_ksip_ksimu_'+PDF[i]     , '', 50, 0., 5000., 50, 0., 5000.))
-    #DDpt1pt2.append(TH2D("2D_pt1_pt2_"+PDF[i]       , "", 50,  0.,  60., 50, 0.,  60.));
-    #DDphi1phi2.append(TH2D("2D_phi1_phi2_"+PDF[i]   , "", 45,  0., 180., 45, 0., 180.));
-    #DDptsumphi.append(TH2D("2D_ptsum_phi_"+PDF[i] 	, "", 50,  0., 120., 45, 0., 180.));
-    #DDpt1ptsum.append(TH2D("2D_pt1_ptsum_"+PDF[i] 	, "", 50,  0.,  60., 50, 0., 120.));
-    #DDpt2ptsum.append(TH2D("2D_pt2_ptsum_"+PDF[i] 	, "", 50,  0.,  60., 50, 0., 100.));
-    #DDmllptsum.append(TH2D("2D_mll_ptsum_"+PDF[i] 	, "", 50,  0., 140., 50, 0., 140.));
-    #DDetatheta.append(TH2D("2D_eta_theta_"+PDF[i]   , "", 50,-10.,  10., 45, 0., 180.));
-    #DDetacost.append(TH2D("2D_eta_cost_"+PDF[i]     , "", 50,-10.,  10., 50,-1.,   1.));
-    #DDmllcost.append(TH2D("2D_mll_cost_"+PDF[i]     , "", 50,  0., 180., 50,-1.,   1.));
-    #DDth1th2.append(TH2D("2D_th1_th2_"+PDF[i]       , "", 45,  0., 180., 45, 0., 180.));
 
     # LOOP OVER LINES IN LHE SAMPLE:
 
     # RESET EVENT COUNTING:
     event  = 0;
     evPASS = 0;
-    # START LOOP:
-    '''if (i == 0):
-    	for j in xrange(434): # skip first 434 lines to avoid MG5 comments
-            	f.readline();
-    else:
-                for j in xrange(440): # skip first 500 lines to avoid MG5 comments
-                        f.readline();'''
+    # START LOOP: <<<<<<<<<<<<<<<<!!! REMMEMBER TO COUNT CORRECTLY HERE
     if (i == 0):
         for j in range(88): # skip first 434 lines to avoid MG5 comments
             f.readline()
@@ -319,14 +263,14 @@ for i in range(len(FILES)):
             pz = float(coll[8]);
             en = float(coll[9]);
             dmo.SetPxPyPzE(px,py,pz,en);
-        elif coll[0] == '2212' and coll[1] == '1' and eval(coll[8]) > 0 and abs(eval(coll[8])) < 7000:
+        elif coll[0] == '2212' and coll[1] == '1' and eval(coll[8]) > 0 and abs(eval(coll[8])) < (SQRTS/2):
             dpp = TLorentzVector();
             px = float(coll[6]);
             py = float(coll[7]);
             pz = float(coll[8]);
             en = float(coll[9]);
             dpp.SetPxPyPzE(px,py,pz,en);
-        elif coll[0] == '2212' and coll[1] == '1' and eval(coll[8]) < 0 and abs(eval(coll[8])) < 7000:
+        elif coll[0] == '2212' and coll[1] == '1' and eval(coll[8]) < 0 and abs(eval(coll[8])) < (SQRTS/2):
             dpm = TLorentzVector();
             px = float(coll[6]);
             py = float(coll[7]);
@@ -456,9 +400,9 @@ for i in range(len(FILES)):
                 protpz[i].Fill(dpm.Pz());
                 proten[i].Fill(dpp.E())
                 proten[i].Fill(dpm.E())
-                protxi[i].Fill(1-(dpp.Pz()/7000))
-                protxi[i].Fill(1-(dpm.Pz()/(-7000)))
-                mpp[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*14000)
+                protxi[i].Fill(1-(dpp.Pz()/(SQRTS/2)))
+                protxi[i].Fill(1-(dpm.Pz()/(-(SQRTS/2))))
+                mpp[i].Fill(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS/2)))))*SQRTS)
                 protpt[i].Fill(dpp.Pt())
                 protpt[i].Fill(dpm.Pt())
                 proteta[i].Fill(dpp.Eta())
@@ -483,26 +427,12 @@ for i in range(len(FILES)):
                 #mopz[i].Fill(dmo.Pz())
                 #moen[i].Fill(dmo.E())
                 #mopt[i].Fill(dmo.Pt())
-                '''
-                invm_decay[i].Fill((dp+dm).M());
-                pt_decay[i].Fill(dp.Pt());
-                pt_decay[i].Fill(dm.Pt());
-                ptsum_decay[i].Fill((dp+dm).Pt());
-                eta_decay[i].Fill((dp).Eta());
-                eta_decay[i].Fill((dm).Eta());
-                phi_decay[i].Fill(dp.Phi());
-                phi_decay[i].Fill(dm.Phi());
-                E_decay[i].Fill(dp.E());
-                E_decay[i].Fill(dm.E());
-                dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
-                dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                #print ("%f" % abs(dp.Pt()-dm.Pt()));
-                acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-                acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-                #if (i ==0): print ("%f" % abs(1. - abs(dp.DeltaPhi(dm))/3.141592));
-                #print ("%f" % float(dp.DeltaPhi(dm)));
-                # 3D:
+
+                # 2D:
+                DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS//2)))))*SQRTS, (dmu+damu).M())
+                DDxipximu[i].Fill(1-(dpp.Pz()/(SQRTS/2)), (1/SQRTS)*(dmu.Pt()*exp(dmu.Eta())+damu.Pt()*exp(damu.Eta())))
+
+                '''# 3D:
                 DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
                 DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
                 DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
@@ -514,25 +444,9 @@ for i in range(len(FILES)):
                 DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
                 DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
                 DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-                '''
-                # 2D:
-                DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/7000))*(1-(dpm.Pz()/(-7000))))*14000, (dmu+damu).M())
-                DDchipchimu[i].Fill(1-(dpp.Pz()/7000), 1-(dmu.Pz()/7000))
-                if dpp.Pt() != 0 and dpm.Pt() != 0:
-                    DDksipksimu[i].Fill((1/14)*(dpp.Pt()*exp(dpp.Eta())+dpm.Pt()*exp(dpm.Eta())), (1/14)*(dmu.Pt()*exp(dmu.Eta())+damu.Pt()*exp(damu.Eta())))
-                '''DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-                DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-                DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-                DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-                DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-                DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-                DDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-                DDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-                DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-                DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-        # End of loop over lines'''
+                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);'''
+
+        # End of loop over lines
         if cuts: print ("Events passing acceptance: %i/%i" % (evPASS,event));
         #print ("Integral of %s: %.6f nb" % (PDF[i],evPASS*xsec[i]/event));
 # End of loop over files
@@ -635,6 +549,45 @@ for l in range(len(histoslog)):
         dataonly.SaveAs(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+histoslog_label[l]+".root");
 # END loop over plots in log scale
 
+# 2: 2D plot in log-scale:
+canvas.SetLeftMargin(0.15);
+canvas.SetBottomMargin(0.11);
+canvas.SetRightMargin(0.23);
+canvas.SetFrameFillColor(887);
+gPad.SetLogy(0);
+for l in range(len(DDlog)):
+    # printar os nomes
+    for m in range(len(FILES)):
+        if (scale):
+            DDlog[l][m].Scale(xsec[m]/Nevt*DDlog[l][m].GetXaxis().GetBinWidth(1));
+            DDlog[l][m].Draw("COLZ");
+            leg.AddEntry(DDlog[l][m]," "+PDF[m],"f");
+        plotlabel.Draw("SAME");
+        DDlog[l][m].Draw("COLZ")
+        DDlog[l][m].GetXaxis().SetTitleOffset(1.);
+        DDlog[l][m].GetYaxis().SetTitleOffset(1.2);
+        DDlog[l][m].GetZaxis().SetTitleOffset(1.55);
+        DDlog[l][m].GetXaxis().SetTitleFont(42);
+        DDlog[l][m].GetYaxis().SetTitleFont(42);
+        DDlog[l][m].GetXaxis().SetLabelFont(42);
+        DDlog[l][m].GetYaxis().SetLabelFont(42);
+        DDlog[l][m].GetXaxis().SetTitleSize(0.05);
+        DDlog[l][m].GetYaxis().SetTitleSize(0.05);
+        DDlog[l][m].GetZaxis().SetTitleSize(0.05);
+        DDlog[l][m].GetXaxis().SetLabelSize(0.04);
+        DDlog[l][m].GetYaxis().SetLabelSize(0.04);
+        DDlog[l][m].GetZaxis().SetLabelSize(0.04);
+        if (scale):
+            DDlog[l][m].GetZaxis().SetTitle("d#sigma/d"+str(DDlog_xaxis[l])+"d"+str(DDlog_yaxis[l])+str(DDlog_varz[l]));
+        else:
+            DDlog[l][m].GetZaxis().SetTitle("Events");
+        DDlog[l][m].GetYaxis().SetTitle(DDlog_yaxis[l]+" "+DDlog_vary[l]+"");
+        DDlog[l][m].GetXaxis().SetTitle(DDlog_xaxis[l]+" "+DDlog_varx[l]+"");
+        DDlog[l][m].GetXaxis().SetDecimals(True);
+        for k in range(len(FILE_TYPES)):
+            canvas.Print(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+DDlog_label[l]+'_'+PDF[m]+"."+FILE_TYPES[k]);
+        leg.Clear();
+# END loop over DDD Lego plots in log scale --
 FILEROOT.Write();
 
 #####################################################################
