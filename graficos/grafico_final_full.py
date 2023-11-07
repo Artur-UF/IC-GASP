@@ -43,7 +43,7 @@ PTCUTLOWER = 0.0; # (NO CUT 0.0)
 
 #processo 3
 FILES   = [
-"amostras/newevrectest.dat", 'amostras/newunweighted_events.lhe', 'amostras/Artur_gammagammamumu-fpmc_elel_pt0_14tev.lhe', 'amostras/Artur_gammagammamumu-lpair_elel_pt0_14tev.lhe']
+"samples/newevrectest.dat", 'samples/newunweighted_events.lhe', 'samples/Artur_gammagammamumu-fpmc_elel_pt0_14tev.lhe', 'samples/Artur_gammagammamumu-lpair_elel_pt0_14tev.lhe']
 #FIXME
 
 # EVENT SAMPLE INPUT:
