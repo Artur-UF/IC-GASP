@@ -131,6 +131,14 @@ histoslog_label  = ["protpz","proten",'protxi','protpt','proteta','mpp',"mupz","
 histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','#eta(p^{+}p^{-})','M(p^{+}p^{-})',"p_{z}(#mu)","E(#mu)","p_{T}(#mu)",'M(#mu^{+}#mu^{-})','#eta(#mu^{+}#mu^{-})','p_{z}(#alpha)','p_{T}(#alpha)','E(#alpha)'];
 histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)','','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)','','(GeV)','(GeV)','(GeV)'];
 
+# 2D
+DDlog         = [DDmppmmumu,DDxipximu] 
+DDlog_label   = ["2Dmppmmumu",'2Dxipximu'];
+DDlog_xaxis   = ["M(p^{+}p^{-})",'#xi(p^{+})']
+DDlog_yaxis   = ["M(#mu^{+}#mu^{-})",'#xi(#mu^{+}#mu^{-})']
+DDlog_varx    = ["(GeV)",'']
+DDlog_vary    = ["(GeV)",'']
+
 '''# 3D
 legoslog         = [DDDpt1pt2,DDDphi1phi2,DDDptsumphi,DDDpt1ptsum,DDDpt2ptsum,DDDmllptsum,DDDetaptsum,DDDetatheta,DDDetacost,DDDmllcost,DDDth1th2];
 legoslog_label   = ["3Dpt1pt2","3Dphi1phi2","3Dptsumphi","3Dpt1ptsum","3Dpt2ptsum","3Dmllptsum","3Detaptsum","3Detatheta","3Detacost","3Dmllcost","3Dth1th2"];
@@ -139,15 +147,6 @@ legoslog_yaxis   = ["p_{T}(x^{-})","#phi(x^{-})","#phi(x^{#pm})","p_{T}(x^{+}x^{
 legoslog_varz    = ["(nb/GeV^{2})","(nb)","(nb/GeV*deg)","(nb/GeV^{2})","(nb/GeV^{2})","(nb/GeV^{2})","(nb/GeV^{2})","(nb/deg)","(nb)","(nb/GeV)","(nb)"];
 legoslog_varx    = ["(GeV)","(deg)","(GeV)","(GeV)","(GeV)","(GeV)","","","","(GeV)","(deg)"];
 legoslog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)"];'''
-
-# 2D
-DDlog         = [DDmppmmumu,DDxipximu] 
-DDlog_label   = ["2Dmppmmumu",'2Dxipximu'];
-DDlog_xaxis   = ["M(p^{+}p^{-})",'#xi(p^{+}p^{-})']
-DDlog_yaxis   = ["M(#mu^{+}#mu^{-})",'#xi(#mu^{+}#mu^{-})']
-DDlog_varx    = ["(GeV)",'']
-DDlog_vary    = ["(GeV)",'']
-
 
 # STARTING THE LOOP OVER FILES:
 for i in range(len(FILES)):
