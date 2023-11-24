@@ -1,8 +1,9 @@
-import sys
-from ROOT import *
 '''
 Writes the protons into an LHE file from  MadGraph or Superchic 
 '''
+import sys
+from ROOT import *
+
 # Receives file name and generator of oringin as arguments
 path = sys.argv[1]
 generator = sys.argv[2].lower()

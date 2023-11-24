@@ -13,37 +13,37 @@ from ROOT import *
 # USER INPUT:
 
 # CROSS SECTION(S) (pb):
-xsec    = [ 0.186818512E-03, 9.985100e-01, 0.13912579E+02, 1.5393433571E+00]; #FIXME
+xsec    = [ 0.186818512E-03, 9.985100e-01, 0.13183148E+02, 1.5393433571E+00]; #FIXME
 #xsec = [ 1. , 1. , 1. , 1. , .1 ];
 
 # PDF "_"+LABEL FOR OUTPUT FILES:
 JOB     = "histos";
 PDF     = [ 'superchic', 'MadGraph', 'FPMC', 'LPAIR']; #FIXME
 scale   = False; #bug, use False
-cuts    = False;
+cuts    = True;
 setLog  = False;
 filled  = False;
 stacked = False;
 data    = False;
 
 # KINEMATICAL CUTS: #FIXME
-INVMCUTUPPER = 150.0; # (NO CUT 9999.0 )
-INVMCUTLOWER = 100.0; # (NO CUT 0.0)
+INVMCUTUPPER = 9999.0; # (NO CUT 9999.0 )
+INVMCUTLOWER = 0.0; # (NO CUT 0.0)
 
-PTPAIRCUTUPPER = 120.0; # (NO CUT 0.0 )
+PTPAIRCUTUPPER = 9999.0; # (NO CUT 0.0 )
 PTPAIRCUTLOWER = 0.0; # (NO CUT 0.0)
 
-ETAPAIRCUT = 2.5; # (NO CUT 100.)
+ETAPAIRCUT = 100.; # (NO CUT 100.)
 INNER = True; # (TRUE: -x < y < +x ; FALSE: y < -x AND y > +x)
 
 PTCUTUPPER = 9999.0; # (NO CUT 9999.0 )
-PTCUTLOWER = 0.0; # (NO CUT 0.0)
+PTCUTLOWER = 10.0; # (NO CUT 0.0)
 
 # INPUT FILES:
 
 #processo 3
 FILES   = [
-"samples/newevrectest.dat", 'samples/newunweighted_events.3.5.lhe', 'samples/Artur_gammagammamumu-fpmc_elel_pt0_14tev.lhe', 'samples/Artur_gammagammamumu-lpair_elel_pt0_14tev.lhe']
+"samples/newevrectest.dat", 'samples/newunweighted_events.3.5.lhe', 'samples/fpmc_pt0_14tev.lhe', 'samples/Artur_gammagammamumu-lpair_elel_pt0_14tev.lhe']
 #FIXME
 
 # EVENT SAMPLE INPUT:
@@ -200,16 +200,16 @@ for i in range(len(FILES)):
     evPASS = 0;
     # START LOOP: <<<<<<<<<<<<<<<<!!! REMMEMBER TO COUNT CORRECTLY HERE
     if (i == 0):
-        for j in range(88): # skip first 434 lines to avoid MG5 comments
+        for j in range(87): # skip first 434 lines to avoid MG5 comments
             f.readline()
     elif (i == 1):
-        for j in range(371): # skip first 431 lines to avoid MG5 comments
+        for j in range(384): # skip first 431 lines to avoid MG5 comments
             f.readline()
     elif (i == 2):
-        for j in range(430): # skip first 430 lines to avoid MG5 comments
+        for j in range(7): # skip first 430 lines to avoid MG5 comments
             f.readline()
     elif (i == 3):
-        for j in range(440): # skip first 440 lines to avoid MG5 comments
+        for j in range(8): # skip first 440 lines to avoid MG5 comments
             f.readline();
     for line in f:
         # SKIP BLANK LINES:
@@ -290,55 +290,43 @@ for i in range(len(FILES)):
                 and dp.Pt() <= PTCUTUPPER
                 and dm.Pt() <= PTCUTUPPER):
                 # 1D:
-                invm_decay[i].Fill((dp+dm).M());
-                pt_decay[i].Fill(dp.Pt());
-                pt_decay[i].Fill(dm.Pt());
-                ptsum_decay[i].Fill((dp+dm).Pt());
-                eta_decay[i].Fill((dp).Eta());
-                eta_decay[i].Fill((dm).Eta());
-                phi_decay[i].Fill(dp.Phi());
-                phi_decay[i].Fill(dm.Phi());
-                E_decay[i].Fill(dp.E());
-                E_decay[i].Fill(dm.E());
-                dpt_decay[i].Fill(abs(dp.Pt()-dm.Pt()));
-                dphi[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                dphi_zoom[i].Fill(abs(dp.DeltaPhi(dm))*180./3.141592);
-                acop_zoom[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-                acop[i].Fill((1. - abs(dp.DeltaPhi(dm))/3.141592));
-                # 3D:
-                DDDetaptsum[i].Fill((dp+dm).Eta(),(dp+dm).Pt());
-                DDDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-                DDDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-                DDDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-                DDDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-                DDDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-                DDDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-                DDDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-                DDDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-                DDDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-                DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+                #-------------------------Medidas dos prótons
+                protpz[i].Fill(dpp.Pz());
+                protpz[i].Fill(dpm.Pz());
+                proten[i].Fill(dpp.E())
+                proten[i].Fill(dpm.E())
+                protxi[i].Fill(1-(dpp.Pz()/(SQRTS/2)))
+                protxi[i].Fill(1-(dpm.Pz()/(-(SQRTS/2))))
+                mpp[i].Fill(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS/2)))))*SQRTS)
+                protpt[i].Fill(dpp.Pt())
+                protpt[i].Fill(dpm.Pt())
+                proteta[i].Fill(dpp.Eta())
+                proteta[i].Fill(dpm.Eta())
+                #-------------------------Medidas dos Múons
+                mupz[i].Fill(dmu.Pz())
+                muen[i].Fill(dmu.E())
+                muen[i].Fill(damu.E())
+                mupt[i].Fill(dmu.Pt())
+                mupt[i].Fill(damu.Pt())
+                ivm_mu[i].Fill((dmu+damu).M())
+                mueta[i].Fill(dmu.Eta())
+                mueta[i].Fill(damu.Eta())
+                #-------------------------Medidas dos fótons
+                phopt[i].Fill(dp.Pt())
+                phopt[i].Fill(dm.Pt())
+                phopz[i].Fill(dp.Pz())
+                phopz[i].Fill(dm.Pz())
+                phoen[i].Fill(dm.E())
+                phoen[i].Fill(dp.E())
+                #-------------------------Medidas do monopolo
+                #mopz[i].Fill(dmo.Pz())
+                #moen[i].Fill(dmo.E())
+                #mopt[i].Fill(dmo.Pt())
+
                 # 2D:
-                DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-                DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-                DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-                DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-                DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-                DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-                DDDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
-                # 2D:
-                DDpt1pt2[i].Fill(dp.Pt(),dm.Pt());
-                DDphi1phi2[i].Fill(dp.Phi()*180./3.141592,dm.Phi()*180./3.141592);
-                DDpt1ptsum[i].Fill(dp.Pt(),(dp+dm).Pt());
-                DDpt2ptsum[i].Fill(dm.Pt(),(dp+dm).Pt());
-                DDmllptsum[i].Fill((dp+dm).M(),(dp+dm).Pt());
-                DDptsumphi[i].Fill((dp+dm).Pt(),dp.Phi()*180./3.141592);
-                DDptsumphi[i].Fill((dp+dm).Pt(),dm.Phi()*180./3.141592);
-                DDetatheta[i].Fill((dp+dm).Eta(),(dp+dm).Theta()*180./3.141592);
-                DDetacost[i].Fill((dp+dm).Eta(),(dp+dm).CosTheta());
-                DDmllcost[i].Fill((dp+dm).M(),(dp+dm).CosTheta());
-                DDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);
+                DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS//2)))))*SQRTS, (dmu+damu).M())
+                DDxipximu[i].Fill(1-(dpp.Pz()/(SQRTS/2)), (1/SQRTS)*(dmu.Pt()*exp(dmu.Eta())+damu.Pt()*exp(damu.Eta())))
+
                 evPASS += 1;
             elif ( cuts and not INNER
                 and (dp+dm).M() >= INVMCUTLOWER
