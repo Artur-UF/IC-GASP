@@ -19,21 +19,22 @@ xsec    = [ 0.186818512E-03, 9.985100e-01, 0.13183148E+02, 1.5393433571E+00]; #F
 # PDF "_"+LABEL FOR OUTPUT FILES:
 JOB     = "histos";
 PDF     = [ 'superchic', 'MadGraph', 'FPMC', 'LPAIR']; #FIXME
-scale   = False; #bug, use False
-cuts    = False;
+scale   = False; #bug, use False, carefull with Nevts
+cuts    = True;
 setLog  = True;
 filled  = False;
 stacked = False;
 data    = False;
 
 # KINEMATICAL CUTS: #FIXME
-INVMCUTUPPER = 9999.0; # (NO CUT 9999.0 )
-INVMCUTLOWER = 0.0; # (NO CUT 0.0)
+INVMCUTUPPER = 14000.0; # (NO CUT 9999.0 )
+INVMCUTLOWER = 10.0; # (NO CUT 0.0)
 
 PTPAIRCUTUPPER = 9999.0; # (NO CUT 0.0 )
 PTPAIRCUTLOWER = 0.0; # (NO CUT 0.0)
 
-ETAPAIRCUT = 100.; # (NO CUT 100.)
+ETACUT = 2.5  # NO CUT: INNER TURE, ETACUT = 20
+ETAPAIRCUT = 5000.; # (NO CUT 100.)
 INNER = True; # (TRUE: -x < y < +x ; FALSE: y < -x AND y > +x)
 
 PTCUTUPPER = 9999.0; # (NO CUT 9999.0 )
@@ -43,11 +44,12 @@ PTCUTLOWER = 10.0; # (NO CUT 0.0)
 
 #processo 3
 FILES   = [
-"samples/newevrectest.dat", 'samples/newunweighted_events.3.5.lhe', 'samples/fpmc_pt0_14tev.lhe', 'samples/Artur_gammagammamumu-lpair_elel_pt0_14tev.lhe']
+"samples/newevrectest.dat", 'samples/newunweighted_events.3.5.lhe', 'samples/fpmc_14tev.lhe', 'samples/Artur_gammagammamumu-lpair_elel_pt10_14tev_20k.lhe']
 #FIXME
 
 # EVENT SAMPLE INPUT:
-Nevt    = 10000; #FIXME
+Nevt    = 200000; #FIXME
+Nmax    = 10000   # number of max events to obtain from samples
 EVTINPUT= str(int(Nevt/1000))+"k";
 SQRTS   = 14000         # in GeV
 
@@ -162,11 +164,11 @@ for i in range(len(FILES)):
     protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,-0.01,0.05))
     protpt.append(TH1D("1D_protpt"+"_"+PDF[i]       , "", 50,-0.1, 1.))
     proteta.append(TH1D("1D_proteta"+"_"+PDF[i]       , "", 50,-20., 20.))
-    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,0., 1500.))
+    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,0., 500.))
     mupz.append(TH1D("1D_mupz"+"_"+PDF[i]       , "", 50,-2500.,2500.))
     muen.append(TH1D("1D_muen"+"_"+PDF[i]       , "", 50,-100., 900.))
     mupt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,-5., 40.0))
-    ivm_mu.append(TH1D("1D_ivm_mu"+"_"+PDF[i]       , "", 50,-25., 1500.0))
+    ivm_mu.append(TH1D("1D_ivm_mu"+"_"+PDF[i]       , "", 50,0., 500.0))
     mueta.append(TH1D("1D_mueta"+"_"+PDF[i]       , "", 50,-15., 15.))
     phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,4973., 4980.))
     phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 500.))
@@ -279,16 +281,18 @@ for i in range(len(FILES)):
         # CLOSE EVENT AND FILL HISTOGRAMS:
         elif coll[0] == "</event>":
             # KINEMATICS OF DECAY PRODUCTS:
-            if ( cuts and INNER
-                and (dp+dm).M() >= INVMCUTLOWER
-                and (dp+dm).M() <= INVMCUTUPPER
-                and (dp+dm).Pt() >= PTPAIRCUTLOWER
-        	    and (dp+dm).Pt() <= PTPAIRCUTUPPER
-                and abs((dp+dm).Eta()) <= ETAPAIRCUT
-                and dp.Pt() >= PTCUTLOWER
-                and dm.Pt() >= PTCUTLOWER
+            if ( cuts and INNER                 # TRY EACH ONE
+                and (dmu+damu).M() >= INVMCUTLOWER
+                and (dmu+damu).M() <= INVMCUTUPPER
+                and (dmu+damu).Pt() >= PTPAIRCUTLOWER
+        	and (dmu+damu).Pt() <= PTPAIRCUTUPPER
+                #and abs((damu+dmu).Eta()) <= ETAPAIRCUT
+                and dmu.Pt() >= PTCUTLOWER
+                and damu.Pt() >= PTCUTLOWER
                 and dp.Pt() <= PTCUTUPPER
-                and dm.Pt() <= PTCUTUPPER):
+                and dm.Pt() <= PTCUTUPPER
+                and abs(damu.Eta()) <= ETACUT
+                and abs(dmu.Eta()) <= ETACUT):
                 # 1D:
                 #-------------------------Medidas dos prótons
                 protpz[i].Fill(dpp.Pz());
@@ -434,7 +438,8 @@ for i in range(len(FILES)):
                 DDDth1th2[i].Fill(dp.Theta()*180./3.141592,dm.Theta()*180./3.141592);'''
 
         # End of loop over lines
-        if cuts: print ("Events passing acceptance: %i/%i" % (evPASS,event));
+        if evPASS >= Nmax: break
+    if cuts: print ("Events passing acceptance: %i/%i" % (evPASS,event));
         #print ("Integral of %s: %.6f nb" % (PDF[i],evPASS*xsec[i]/event));
 # End of loop over files
 
