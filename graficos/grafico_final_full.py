@@ -21,7 +21,7 @@ JOB     = "histos";
 PDF     = [ 'superchic', 'MadGraph', 'FPMC', 'LPAIR']; #FIXME
 scale   = False; #bug, use False, carefull with Nevts
 cuts    = True;
-setLog  = True;
+setLog  = False;
 filled  = False;
 stacked = False;
 data    = False;
@@ -161,14 +161,14 @@ for i in range(len(FILES)):
     # 1D
     protpz.append(TH1D("1D_protpz"+"_"+PDF[i]       , "", 50,4300., 7200.))
     proten.append(TH1D("1D_proten"+"_"+PDF[i]       , "", 50,4300., 7200.))
-    protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 50,-0.01,0.05))
+    protxi.append(TH1D("1D_protxi"+"_"+PDF[i]       , "", 60,-0.003,0.03))
     protpt.append(TH1D("1D_protpt"+"_"+PDF[i]       , "", 50,-0.1, 1.))
     proteta.append(TH1D("1D_proteta"+"_"+PDF[i]       , "", 50,-20., 20.))
-    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 50,0., 500.))
+    mpp.append(TH1D("1D_mpp"+"_"+PDF[i]       , "", 60,0., 120.))
     mupz.append(TH1D("1D_mupz"+"_"+PDF[i]       , "", 50,-2500.,2500.))
     muen.append(TH1D("1D_muen"+"_"+PDF[i]       , "", 50,-100., 900.))
     mupt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,-5., 40.0))
-    ivm_mu.append(TH1D("1D_ivm_mu"+"_"+PDF[i]       , "", 50,0., 500.0))
+    ivm_mu.append(TH1D("1D_ivm_mu"+"_"+PDF[i]       , "", 60,0., 120.0))
     mueta.append(TH1D("1D_mueta"+"_"+PDF[i]       , "", 50,-15., 15.))
     phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,4973., 4980.))
     phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 500.))
@@ -443,6 +443,37 @@ for i in range(len(FILES)):
         #print ("Integral of %s: %.6f nb" % (PDF[i],evPASS*xsec[i]/event));
 # End of loop over files
 
+#############################################################
+#
+#-----------------------KS TEST------------------------------
+#
+#############################################################
+
+with open(f'ks-test.txt', 'w') as f:
+    f.write('>>>>>>>KOLMOGOROV-SMIRNOV TEST<<<<<<<\n\n')
+    f.write(f'Invariant-Mass protons\n')
+    for i in range(4):
+        for j in range(i+1, 4):
+            ks = mpp[i].KolmogorovTest(mpp[j])
+            f.write(f'{PDF[i]:>10} X {PDF[j]:<10}: {ks}\n')
+    f.write(f'\nInvariant-Mass leptons\n')
+    for i in range(4):
+        for j in range(i+1, 4):
+            ks = ivm_mu[i].KolmogorovTest(ivm_mu[j])
+            f.write(f'{PDF[i]:>10} X {PDF[j]:<10}: {ks}\n')
+    f.write(f'\n\u03A7 of protons\n')
+    for i in range(4):
+        for j in range(i+1, 4):
+            ks = protxi[i].KolmogorovTest(protxi[j])
+            f.write(f'{PDF[i]:>10} X {PDF[j]:<10}: {ks}\n')
+
+#############################################################
+#
+#-----------------------END OF KS TEST-----------------------
+#
+#############################################################
+
+
 # Starting Drawing step:
 
 # Defining the top label in the plots:
@@ -527,6 +558,8 @@ for l in range(len(histoslog)):
     globals()["hs_histoslog"+str(l)].GetXaxis().SetLabelSize(0.04);
     globals()["hs_histoslog"+str(l)].GetYaxis().SetLabelSize(0.04);
     globals()["hs_histoslog"+str(l)].GetXaxis().SetDecimals(True);
+    globals()["hs_histoslog"+str(l)].GetYaxis().SetNdivisions(5, optim=kTRUE)
+    globals()["hs_histoslog"+str(l)].GetXaxis().SetNdivisions(10, optim=kTRUE)
     if data:
             datapoints.Draw("E2,SAME");
             leg.AddEntry(datapoints,"data","p");
