@@ -1,0 +1,25 @@
+>>>>>>>KOLMOGOROV-SMIRNOV TEST<<<<<<<
+
+Invariant-Mass protons
+ superchic X MadGraph  : 0.12710906795911603
+ superchic X FPMC      : 0.0
+ superchic X LPAIR     : 2.849800638526499e-20
+  MadGraph X FPMC      : 0.0
+  MadGraph X LPAIR     : 9.600681959835604e-21
+      FPMC X LPAIR     : 5.56905530457281e-35
+
+Invariant-Mass leptons
+ superchic X MadGraph  : 0.13138325901602502
+ superchic X FPMC      : 0.0
+ superchic X LPAIR     : 0.6993741996864229
+  MadGraph X FPMC      : 0.0
+  MadGraph X LPAIR     : 0.060580597311077594
+      FPMC X LPAIR     : 0.0
+
+Χ of protons
+ superchic X MadGraph  : 0.3153639561263688
+ superchic X FPMC      : 0.0
+ superchic X LPAIR     : 1.9964646163255602e-08
+  MadGraph X FPMC      : 0.0
+  MadGraph X LPAIR     : 2.5508152590507743e-09
+      FPMC X LPAIR     : 0.0

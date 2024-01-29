@@ -2,6 +2,7 @@ from __future__ import division
 from subprocess import call
 from math import *
 from ROOT import *
+from array import array
 
 #####################################################################
 # GGS (CERN-CMS/UFRGS) ---
@@ -150,6 +151,14 @@ legoslog_varz    = ["(nb/GeV^{2})","(nb)","(nb/GeV*deg)","(nb/GeV^{2})","(nb/GeV
 legoslog_varx    = ["(GeV)","(deg)","(GeV)","(GeV)","(GeV)","(GeV)","","","","(GeV)","(deg)"];
 legoslog_vary    = ["(GeV)","(deg)","","(GeV)","(GeV)","(GeV)","(GeV)","(deg)","","","(deg)"];'''
 
+#------------ Lists for KS test ----------------------
+
+KS_ivm_pp = list([] for i in range(len(FILES)))
+KS_ivm_mu = list([] for i in range(len(FILES)))
+KS_protxi = list([] for i in range(len(FILES)))
+
+#-----------------------------------------------------
+
 # STARTING THE LOOP OVER FILES:
 for i in range(len(FILES)):
     f = open(FILES[i],'r');
@@ -294,7 +303,7 @@ for i in range(len(FILES)):
                 and abs(damu.Eta()) <= ETACUT
                 and abs(dmu.Eta()) <= ETACUT):
                 # 1D:
-                #-------------------------Medidas dos prótons
+                #-------------------------Proton mesurements
                 protpz[i].Fill(dpp.Pz());
                 protpz[i].Fill(dpm.Pz());
                 proten[i].Fill(dpp.E())
@@ -306,7 +315,7 @@ for i in range(len(FILES)):
                 protpt[i].Fill(dpm.Pt())
                 proteta[i].Fill(dpp.Eta())
                 proteta[i].Fill(dpm.Eta())
-                #-------------------------Medidas dos Múons
+                #-------------------------Múon mesurements
                 mupz[i].Fill(dmu.Pz())
                 muen[i].Fill(dmu.E())
                 muen[i].Fill(damu.E())
@@ -315,17 +324,23 @@ for i in range(len(FILES)):
                 ivm_mu[i].Fill((dmu+damu).M())
                 mueta[i].Fill(dmu.Eta())
                 mueta[i].Fill(damu.Eta())
-                #-------------------------Medidas dos fótons
+                #-------------------------Photon mesurements
                 phopt[i].Fill(dp.Pt())
                 phopt[i].Fill(dm.Pt())
                 phopz[i].Fill(dp.Pz())
                 phopz[i].Fill(dm.Pz())
                 phoen[i].Fill(dm.E())
                 phoen[i].Fill(dp.E())
-                #-------------------------Medidas do monopolo
+                #-------------------------Monopole mesurements
                 #mopz[i].Fill(dmo.Pz())
                 #moen[i].Fill(dmo.E())
                 #mopt[i].Fill(dmo.Pt())
+
+                #-------------------------Mesurements for the KS test
+                KS_ivm_pp[i].append(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS/2)))))*SQRTS)
+                KS_protxi[i].append(1-(dpp.Pz()/(SQRTS/2)))
+                KS_protxi[i].append(1-(dpm.Pz()/(-(SQRTS/2))))
+                KS_ivm_mu[i].append((dmu+damu).M())
 
                 # 2D:
                 DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS//2)))))*SQRTS, (dmu+damu).M())
@@ -454,17 +469,17 @@ with open(f'ks-test.txt', 'w') as f:
     f.write(f'Invariant-Mass protons\n')
     for i in range(4):
         for j in range(i+1, 4):
-            ks = mpp[i].KolmogorovTest(mpp[j])
+            ks = TMath.KolmogorovTest(len(KS_ivm_pp[i]), array('d', sorted(KS_ivm_pp[i])), len(KS_ivm_pp[j]), array('d', sorted(KS_ivm_pp[j])), 'D') 
             f.write(f'{PDF[i]:>10} X {PDF[j]:<10}: {ks}\n')
     f.write(f'\nInvariant-Mass leptons\n')
     for i in range(4):
         for j in range(i+1, 4):
-            ks = ivm_mu[i].KolmogorovTest(ivm_mu[j])
+            ks = TMath.KolmogorovTest(len(KS_ivm_mu[i]), array('d', sorted(KS_ivm_mu[i])), len(KS_ivm_mu[j]), array('d', sorted(KS_ivm_mu[j])), 'D')
             f.write(f'{PDF[i]:>10} X {PDF[j]:<10}: {ks}\n')
     f.write(f'\n\u03A7 of protons\n')
     for i in range(4):
         for j in range(i+1, 4):
-            ks = protxi[i].KolmogorovTest(protxi[j])
+            ks = TMath.KolmogorovTest(len(KS_protxi[i]), array('d', sorted(KS_protxi[i])), len(KS_protxi[j]), array('d', sorted(KS_protxi[j])), 'D')
             f.write(f'{PDF[i]:>10} X {PDF[j]:<10}: {ks}\n')
 
 #############################################################
