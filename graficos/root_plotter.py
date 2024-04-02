@@ -2,20 +2,93 @@ from __future__ import division
 from subprocess import call
 from math import *
 from ROOT import *
+import numpy as np
 
+rootinput = np.loadtxt('root_input.txt', unpack=True, dtype=str, delimiter='=')
+
+# CROSS SECTION(S) (pb):
+xsec    = eval(rootinput[1][0])
+
+# Plotting options:
+JOB     = eval(rootinput[1][1])
+PDF     = eval(rootinput[1][2])
+scale   = eval(rootinput[1][3]) 
+cuts    = eval(rootinput[1][4])
+setLog  = eval(rootinput[1][5])
+filled  = eval(rootinput[1][6])
+stacked = eval(rootinput[1][7])
+data    = eval(rootinput[1][8])
+
+# EVENT SAMPLE INPUT:
+Nevt    = eval(rootinput[1][9])
+Nmax    = eval(rootinput[1][10])
+EVTINPUT= str(int(Nmax/1000))+"k";
+SQRTS   = eval(rootinput[1][11])
+
+# LABELS:
+LABEL = "FULL_inner.final.madgraph";
+if cuts: LABEL+=".cuts";
+if scale: LABEL+=".scaled";
+if setLog: LABEL+=".log";
+if filled: LABEL+=".filled";
+if stacked: LABEL+=".stacked";
+if data: LABEL+=".data";
+
+# IMAGE FORMATS TO BE CREATED:
+FILE_TYPES = [LABEL+".png"];
+
+# CREATE INDIVIDUAL DIRS FOR IMAGE TYPES:
+for l in range(len(FILE_TYPES)):
+	call(["mkdir","-p",FILE_TYPES[l]]);
+
+FILEROOT = TFile.Open("histos"+LABEL+".root", "READ")
+
+keys = FILEROOT.GetListOfKeys()
+
+# ARRAYS FOR EACH TYPE OF DISTRIBUTIONS:
+#
+# 1D:
+protpz       = []
+proten       = []
+protxi       = []
+protpt       = []
+proteta      = []
+mpp          = []
+mupz         = []
+muen         = []
+mupt         = []
+ivmmu        = []
+mueta        = []
+phopz        = []
+phopt        = []
+phoen        = []
+
+# 2D:
+DDmppmmumu   = []
+DDxipximu    = []
+
+# READING FROM ROOT FILE AND ALLOCATING DATA IN LISTS
+for k in keys:
+    name = k.GetName().split('_')[1]
+    eval(name).append(k.ReadObj())
 
 # THE ARRAYS STORE THE LABELS FOR AXIS AND UNITS:
 # 1D
+histoslog        = [protpz,proten,protxi,protpt,proteta,mpp,mupz,muen,mupt,ivmmu,mueta,phopz,phopt,phoen];
 histoslog_label  = ["protpz","proten",'protxi','protpt','proteta','mpp',"mupz","muen","mupt",'ivm_mu','mueta','phopz','phopt','phoen'];
 histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','#eta(p^{+}p^{-})','M(p^{+}p^{-})',"p_{z}(#mu)","E(#mu)","p_{T}(#mu)",'M(#mu^{+}#mu^{-})','#eta(#mu^{+}#mu^{-})','p_{z}(#alpha)','p_{T}(#alpha)','E(#alpha)'];
 histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)','','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)','','(GeV)','(GeV)','(GeV)']
 
 # 2D
+DDlog         = [DDmppmmumu,DDxipximu] 
 DDlog_label   = ["2Dmppmmumu",'2Dxipximu'];
 DDlog_xaxis   = ["M(p^{+}p^{-})",'#xi(p^{+})']
 DDlog_yaxis   = ["M(#mu^{+}#mu^{-})",'#xi(#mu^{+}#mu^{-})']
 DDlog_varx    = ["(GeV)",'']
 DDlog_vary    = ["(GeV)",'']
+
+# FETCHING NUMBER OF FILES
+NUMFILES = len(histoslog[0])
 
 # Starting Drawing step:
 
@@ -61,7 +134,7 @@ if setLog: gPad.SetLogy(1);
 else: gPad.SetLogy(0);
 legs=0;
 for l in range(len(histoslog)):
-    for m in range(len(FILES)):
+    for m in range(NUMFILES):
             if scale:
                     histoslog[l][m].Scale(xsec[m]/Nevt*histoslog[l][m].GetBinWidth(1));
             histoslog[l][m].SetLineColor(m+1);
@@ -128,7 +201,7 @@ canvas.SetFrameFillColor(887);
 gPad.SetLogy(0);
 for l in range(len(DDlog)):
     # printar os nomes
-    for m in range(len(FILES)):
+    for m in range(NUMFILES):
         if (scale):
             DDlog[l][m].Scale(xsec[m]/Nevt*DDlog[l][m].GetXaxis().GetBinWidth(1));
             DDlog[l][m].Draw("COLZ");
@@ -159,7 +232,6 @@ for l in range(len(DDlog)):
             canvas.Print(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+DDlog_label[l]+'_'+PDF[m]+"."+FILE_TYPES[k]);
         leg.Clear();
 # END loop over DDD Lego plots in log scale --
-;
 
 #####################################################################
 #

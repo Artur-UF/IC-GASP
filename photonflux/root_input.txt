@@ -1,0 +1,20 @@
+# CROSS SECTION(S) (pb):
+xsec    = [4.324800e+00,3.505301e-01,1.490600e+02]
+
+# Plotting options:
+JOB     = "histos"
+PDF     = ['ax ax','a a','p p']
+scale   = False
+cuts    = False
+setLog  = True
+filled  = False
+stacked = False
+data    = False
+
+# EVENT SAMPLE INPUT:
+Nevt    = 10000
+Nmax    = 10000
+SQRTS   = 13000
+
+FILES   = ['samples/madgraph-photonflux-axax-aa.lhe', 'samples/madgraph-photonflux-aa-aa.lhe', 'samples/madgraph-photonflux-pp-aa.lhe']
+

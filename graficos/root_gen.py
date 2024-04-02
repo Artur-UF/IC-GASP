@@ -3,6 +3,7 @@ from subprocess import call
 from math import *
 from ROOT import *
 from array import array
+import numpy as np
 
 #####################################################################
 # GGS (CERN-CMS/UFRGS) ---
@@ -13,19 +14,20 @@ from array import array
 #####################################################################
 # USER INPUT:
 
+rootinput = np.loadtxt('root_input.txt', unpack=True, dtype=str, delimiter='=')
+
 # CROSS SECTION(S) (pb):
-xsec    = [ 0.186818512E-03, 9.985100e-01, 0.13183148E+02, 1.5393433571E+00]; #FIXME
-#xsec = [ 1. , 1. , 1. , 1. , .1 ];
+xsec    = eval(rootinput[1][0]) #FIXME
 
 # PDF "_"+LABEL FOR OUTPUT FILES:
-JOB     = "histos";
-PDF     = [ 'superchic', 'MadGraph', 'FPMC', 'LPAIR']; #FIXME
-scale   = False; #bug, use False, carefull with Nevts
-cuts    = True;
-setLog  = False;
-filled  = False;
-stacked = False;
-data    = False;
+JOB     = eval(rootinput[1][1])
+PDF     = eval(rootinput[1][2]) #FIXME
+scale   = eval(rootinput[1][3]) #bug, use False, carefull with Nevts
+cuts    = eval(rootinput[1][4])
+setLog  = eval(rootinput[1][5])
+filled  = eval(rootinput[1][6])
+stacked = eval(rootinput[1][7])
+data    = eval(rootinput[1][8])
 
 # KINEMATICAL CUTS: #FIXME
 INVMCUTUPPER = 14000.0; # (NO CUT 9999.0 )
@@ -44,15 +46,14 @@ PTCUTLOWER = 10.0; # (NO CUT 0.0)
 # INPUT FILES:
 
 #processo 3
-FILES   = [
-"samples/newevrectest.dat", 'samples/newunweighted_events.3.5.lhe', 'samples/fpmc_14tev.lhe', 'samples/Artur_gammagammamumu-lpair_elel_pt10_14tev_20k.lhe']
+FILES   = eval(rootinput[1][12])
 #FIXME
 
 # EVENT SAMPLE INPUT:
-Nevt    = 200000; #FIXME
-Nmax    = 10000   # number of max events to obtain from samples
+Nevt    = eval(rootinput[1][9]) #FIXME
+Nmax    = eval(rootinput[1][10]) # number of max events to obtain from samples
 EVTINPUT= str(int(Nevt/1000))+"k";
-SQRTS   = 14000         # in GeV
+SQRTS   = eval(rootinput[1][11]) # in GeV
 
 #####################################################################
 
@@ -99,7 +100,7 @@ mpp          = []
 mupz         = []
 muen         = []
 mupt         = []
-ivm_mu       = []
+ivmmu       = []
 mueta        = []
 phopz        = []
 phopt        = []
@@ -113,7 +114,7 @@ DDxipximu    = []
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 
 # 1D
-histoslog  = [protpz,proten,protxi,protpt,proteta,mpp,mupz,muen,mupt,ivm_mu,mueta,phopz,phopt,phoen];
+histoslog  = [protpz,proten,protxi,protpt,proteta,mpp,mupz,muen,mupt,ivmmu,mueta,phopz,phopt,phoen];
 
 # 2D
 DDlog      = [DDmppmmumu,DDxipximu] 
@@ -144,7 +145,7 @@ for i in range(len(FILES)):
     mupz.append(TH1D("1D_mupz"+"_"+PDF[i]       , "", 50,-2500.,2500.))
     muen.append(TH1D("1D_muen"+"_"+PDF[i]       , "", 50,-100., 900.))
     mupt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,-5., 40.0))
-    ivm_mu.append(TH1D("1D_ivm_mu"+"_"+PDF[i]       , "", 50,0., 120.0))
+    ivmmu.append(TH1D("1D_ivmmu"+"_"+PDF[i]       , "", 50,0., 120.0))
     mueta.append(TH1D("1D_mueta"+"_"+PDF[i]       , "", 50,-15., 15.))
     phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,4973., 4980.))
     phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 500.))
@@ -154,8 +155,8 @@ for i in range(len(FILES)):
     #mopt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,-5., 40.0))
 
     # 2D
-    DDmppmmumu.append(TH2D('2D_mpp_mmumu_'+PDF[i]       , '', 50, 0., 1400., 50, 0., 1400.))
-    DDxipximu.append(TH2D('2D_xip_ximu_'+PDF[i]     , '', 50, 0., 1., 50, 0., 1.))
+    DDmppmmumu.append(TH2D('2D_DDmppmmumu_'+PDF[i]       , '', 50, 0., 1400., 50, 0., 1400.))
+    DDxipximu.append(TH2D('2D_DDxipximu_'+PDF[i]     , '', 50, 0., 1., 50, 0., 1.))
 
     # LOOP OVER LINES IN LHE SAMPLE:
 
@@ -274,7 +275,7 @@ for i in range(len(FILES)):
                 muen[i].Fill(damu.E())
                 mupt[i].Fill(dmu.Pt())
                 mupt[i].Fill(damu.Pt())
-                ivm_mu[i].Fill((dmu+damu).M())
+                ivmmu[i].Fill((dmu+damu).M())
                 mueta[i].Fill(dmu.Eta())
                 mueta[i].Fill(damu.Eta())
                 #-------------------------Photon mesurements
@@ -372,7 +373,7 @@ for i in range(len(FILES)):
                 muen[i].Fill(damu.E())
                 mupt[i].Fill(dmu.Pt())
                 mupt[i].Fill(damu.Pt())
-                ivm_mu[i].Fill((dmu+damu).M())
+                ivmmu[i].Fill((dmu+damu).M())
                 mueta[i].Fill(dmu.Eta())
                 mueta[i].Fill(damu.Eta())
                 #-------------------------Medidas dos fótons
