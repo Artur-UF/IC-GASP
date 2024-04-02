@@ -209,6 +209,7 @@ for i in range(len(FILES)):
             en = float(coll[9]);
             dp.SetPxPyPzE(px,py,pz,en);
             first = True
+            #print(f'First photon; first = {first}')
         elif coll[0] == '22' and coll[1] == '1' and first:
             dm = TLorentzVector();
             px = float(coll[6]);
@@ -216,7 +217,8 @@ for i in range(len(FILES)):
             pz = float(coll[8]);
             en = float(coll[9]);
             dm.SetPxPyPzE(px,py,pz,en);
-            first == False
+            first = False
+            #print(f'Second photon; first = {first}')
         elif coll[0] == '13' and coll[1] == '1':
             dmu = TLorentzVector();
             px = float(coll[6]);
@@ -254,6 +256,7 @@ for i in range(len(FILES)):
             dpm.SetPxPyPzE(px,py,pz,en);
         # CLOSE EVENT AND FILL HISTOGRAMS:
         elif coll[0] == "</event>":
+            #print(f'Closing event; first {first}')
             # KINEMATICS OF DECAY PRODUCTS:
             if ( cuts and INNER                 # TRY EACH ONE
                 and (dmu+damu).M() >= INVMCUTLOWER
@@ -397,7 +400,7 @@ for i in range(len(FILES)):
                 phoivm[i].Fill((dp+dm).M())
                 phopsrap2[i].Fill((dp+dm).Eta())
                 phopsrap1[i].Fill(dp.Eta())
-                phopsrap1[i].Fill(dm.Eta())               
+                #phopsrap1[i].Fill(dm.Eta())               
                 phoY[i].Fill(dp.Y())
                 phoY[i].Fill(dm.Y())
                 #-------------------------Medidas do monopolo
