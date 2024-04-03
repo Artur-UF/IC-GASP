@@ -46,14 +46,14 @@ PTCUTLOWER = 10.0; # (NO CUT 0.0)
 # INPUT FILES:
 
 #processo 3
-FILES   = eval(rootinput[1][12])#FIXME
+FILES   = eval(rootinput[1][13])#FIXME
 
 
 # EVENT SAMPLE INPUT:
-Nevt    = eval(rootinput[1][9]) #FIXME
-Nmax    = eval(rootinput[1][10]) # number of max events to obtain from samples
+Nevt    = eval(rootinput[1][10]) #FIXME
+Nmax    = eval(rootinput[1][11]) # number of max events to obtain from samples
 EVTINPUT= str(int(Nevt/1000))+"k";
-SQRTS   = eval(rootinput[1][11]) # in GeV
+SQRTS   = eval(rootinput[1][12]) # in GeV
 
 #####################################################################
 
@@ -412,7 +412,7 @@ for i in range(len(FILES)):
                 evPASS += 1
         # End of loop over lines
         if evPASS >= Nmax: break   
-    print(phoivm[i].Integral())
+    #print(phoivm[i].Integral())
     if cuts: print ("Events passing acceptance: %i/%i" % (evPASS,event));
         #print ("Integral of %s: %.6f nb" % (PDF[i],evPASS*xsec[i]/event));
 # End of loop over files

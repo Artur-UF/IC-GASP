@@ -1,15 +1,16 @@
 # CROSS SECTION(S) (pb):
-xsec    = [4.324800e+00,3.505301e-01,1.490600e+02]
+xsec    = [1.461700e+02,8.148400e-04,3.599600e+02]
 
 # Plotting options:
 JOB     = "histos"
 PDF     = ['a\' a\'','a a','p p']
-scale   = False
+scale   = True
 cuts    = False
 setLog  = True
 filled  = False
 stacked = False
 data    = False
+LUMI    = True
 
 # EVENT SAMPLE INPUT:
 Nevt    = 10000
@@ -17,4 +18,7 @@ Nmax    = 10000
 SQRTS   = 13000
 
 FILES   = ['samples/madgraph-photonflux-axax-aa.lhe', 'samples/madgraph-photonflux-aa-aa.lhe', 'samples/madgraph-photonflux-pp-aa.lhe']
+
+# Luminosity
+lumi    = 150
 

@@ -18,12 +18,15 @@ setLog  = eval(rootinput[1][5])
 filled  = eval(rootinput[1][6])
 stacked = eval(rootinput[1][7])
 data    = eval(rootinput[1][8])
+LUMI    = eval(rootinput[1][9])
 
 # EVENT SAMPLE INPUT:
-Nevt    = eval(rootinput[1][9])
-Nmax    = eval(rootinput[1][10])
+Nevt    = eval(rootinput[1][10])
+Nmax    = eval(rootinput[1][11])
 EVTINPUT= str(int(Nmax/1000))+"k";
-SQRTS   = eval(rootinput[1][11])
+SQRTS   = eval(rootinput[1][12])
+lumi    = float(rootinput[1][14])
+
 
 # LABELS:
 LABEL = "FULL_inner.final.madgraph";
@@ -139,6 +142,8 @@ else: gPad.SetLogy(0);
 legs=0;
 for l in range(len(histoslog)):
     for m in range(NUMFILES):
+            if lumi:
+                histoslog[l][m].Scale(xsec[m]/Nevt*lumi*histoslog[l][m].GetBinWidth(1))
             if scale:
                     histoslog[l][m].Scale(xsec[m]/Nevt*histoslog[l][m].GetBinWidth(1));
             histoslog[l][m].SetLineColor(m+1);
@@ -169,6 +174,8 @@ for l in range(len(histoslog)):
             globals()["hs_histoslog"+str(l)].GetYaxis().SetTitle("d#sigma/d"+str(histoslog_axis[l])+str(histoslog_varx[l])+" (pb)");
     else:
             globals()["hs_histoslog"+str(l)].GetYaxis().SetTitle("Events");
+    if LUMI:
+            globals()["hs_histoslog"+str(l)].GetYaxis().SetTitle("Yield")
     globals()["hs_histoslog"+str(l)].GetXaxis().SetTitle(str(histoslog_axis[l])+" "+str(histoslog_varx[l]));
     globals()["hs_histoslog"+str(l)].GetXaxis().SetTitleFont(42);
     globals()["hs_histoslog"+str(l)].GetYaxis().SetTitleFont(42);
@@ -190,8 +197,6 @@ for l in range(len(histoslog)):
     plotlabel.Draw("SAME");
     for k in range(len(FILE_TYPES)):
         canvas.Print(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+histoslog_label[l]+"."+FILE_TYPES[k]);
-        if histoslog_label[l] == 'phoivm':
-            print(histoslog[l][m].Integral())
     leg.Clear();
     if data:
         dataonly.SetLineStyle(2);
