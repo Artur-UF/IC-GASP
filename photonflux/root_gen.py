@@ -152,11 +152,11 @@ for i in range(len(FILES)):
     ivmmu.append(TH1D("1D_ivmmu"+"_"+PDF[i]       , "", 50,0., 120.0))
     mueta.append(TH1D("1D_mueta"+"_"+PDF[i]       , "", 50,-15., 15.))
     phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,-10000., 10000.))
-    phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 1000.))
-    phoen.append(TH1D("1D_phoen"+"_"+PDF[i]       , "", 50,-100., 2000.))
+    phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 8000.))
+    phoen.append(TH1D("1D_phoen"+"_"+PDF[i]       , "", 50,-100., 5000.))
     phoivm.append(TH1D("1D_phoivm"+"_"+PDF[i]     , "", 50, -1000, 10000))
-    phopsrap2.append(TH1D('1D_phopsrap2'+'_'+PDF[i] , '', 50, -10, 15))
-    phopsrap1.append(TH1D('1D_phopsrap1'+'_'+PDF[i] , '', 50, -5, 10))
+    phopsrap2.append(TH1D('1D_phopsrap2'+'_'+PDF[i] , '', 50, -1, 1))
+    phopsrap1.append(TH1D('1D_phopsrap1'+'_'+PDF[i] , '', 50, -10, 10))
     phoY.append(TH1D('1D_phoY'+'_'+PDF[i]         , '', 50, -10000, 10000))
     #mopz.append(TH1D("1D_mupz"+"_"+PDF[i]       , "", 50,-2500.,2500.))
     #moen.append(TH1D("1D_muen"+"_"+PDF[i]       , "", 50,-100., 900.))
@@ -209,7 +209,6 @@ for i in range(len(FILES)):
             en = float(coll[9]);
             dp.SetPxPyPzE(px,py,pz,en);
             first = True
-            #print(f'First photon; first = {first}')
         elif coll[0] == '22' and coll[1] == '1' and first:
             dm = TLorentzVector();
             px = float(coll[6]);
@@ -218,7 +217,6 @@ for i in range(len(FILES)):
             en = float(coll[9]);
             dm.SetPxPyPzE(px,py,pz,en);
             first = False
-            #print(f'Second photon; first = {first}')
         elif coll[0] == '13' and coll[1] == '1':
             dmu = TLorentzVector();
             px = float(coll[6]);
@@ -256,7 +254,6 @@ for i in range(len(FILES)):
             dpm.SetPxPyPzE(px,py,pz,en);
         # CLOSE EVENT AND FILL HISTOGRAMS:
         elif coll[0] == "</event>":
-            #print(f'Closing event; first {first}')
             # KINEMATICS OF DECAY PRODUCTS:
             if ( cuts and INNER                 # TRY EACH ONE
                 and (dmu+damu).M() >= INVMCUTLOWER
@@ -400,7 +397,7 @@ for i in range(len(FILES)):
                 phoivm[i].Fill((dp+dm).M())
                 phopsrap2[i].Fill((dp+dm).Eta())
                 phopsrap1[i].Fill(dp.Eta())
-                #phopsrap1[i].Fill(dm.Eta())               
+                phopsrap1[i].Fill(dm.Eta())               
                 phoY[i].Fill(dp.Y())
                 phoY[i].Fill(dm.Y())
                 #-------------------------Medidas do monopolo
@@ -412,9 +409,10 @@ for i in range(len(FILES)):
                 #DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS//2)))))*SQRTS, (dmu+damu).M())
                 #DDxipximu[i].Fill(1-(dpp.Pz()/(SQRTS/2)), (1/SQRTS)*(dmu.Pt()*exp(dmu.Eta())+damu.Pt()*exp(damu.Eta())))
 
-
+                evPASS += 1
         # End of loop over lines
-        if evPASS >= Nmax: break
+        if evPASS >= Nmax: break   
+    print(phoivm[i].Integral())
     if cuts: print ("Events passing acceptance: %i/%i" % (evPASS,event));
         #print ("Integral of %s: %.6f nb" % (PDF[i],evPASS*xsec[i]/event));
 # End of loop over files

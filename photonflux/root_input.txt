@@ -3,7 +3,7 @@ xsec    = [4.324800e+00,3.505301e-01,1.490600e+02]
 
 # Plotting options:
 JOB     = "histos"
-PDF     = ['ax ax','a a','p p']
+PDF     = ['a\' a\'','a a','p p']
 scale   = False
 cuts    = False
 setLog  = True

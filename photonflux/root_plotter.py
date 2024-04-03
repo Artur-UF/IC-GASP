@@ -80,7 +80,7 @@ for k in keys:
 # 1D
 histoslog        = [protpz,proten,protxi,protpt,proteta,mpp,mupz,muen,mupt,ivmmu,mueta,phopz,phopt,phoen,phoivm,phopsrap2,phopsrap1,phoY]
 histoslog_label  = ["protpz","proten",'protxi','protpt','proteta','mpp',"mupz","muen","mupt",'ivm_mu','mueta','phopz','phopt','phoen','phoivm','phopsrap2','phopsrap1','phoY']
-histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','#eta(p^{+}p^{-})','M(p^{+}p^{-})',"p_{z}(#mu)","E(#mu)","p_{T}(#mu)",'M(#mu^{+}#mu^{-})','#eta(#mu^{+}#mu^{-})','p_{z}(#alpha)','p_{T}(#alpha)','E(#alpha)','M(#alpha)','#eta(#alpha #alpha)','#eta(#alpha)','Y']
+histoslog_axis   = ["p_{z}(p)","E(p)",'#chi(p)','p_{T}(p)','#eta(p^{+}p^{-})','M(p^{+}p^{-})',"p_{z}(#mu)","E(#mu)","p_{T}(#mu)",'M(#mu^{+}#mu^{-})','#eta(#mu^{+}#mu^{-})','p_{z}(#gamma#gamma)','p_{T}(#gamma#gamma)','E(#gamma#gamma)','M(#gamma#gamma)','#eta(#gamma#gamma)','#eta(#gamma)','Y(#gamma#gamma)']
 histoslog_varx   = ["(GeV)","(GeV)",'','(GeV)','','(GeV)',"(GeV)","(GeV)","(GeV)",'(GeV)','','(GeV)','(GeV)','(GeV)','(GeV)','','','']
 
 # 2D
@@ -107,7 +107,7 @@ plotlabel.SetFillColor(0);
 plotlabel.SetBorderSize(0);
 plotlabel.SetTextSize(0.035);
 plotlabel.SetTextFont(42);
-plotlabel.AddText("MadGraphv5 #bullet #sqrt{s}=14 TeV #bullet "+EVTINPUT+" evt");
+plotlabel.AddText("MadGraphv5 #bullet #sqrt{s}=13 TeV #bullet "+EVTINPUT+" evt");
 
 # Legend:
 leg = TLegend(0.55,0.72,0.75,0.87);
@@ -189,7 +189,9 @@ for l in range(len(histoslog)):
     leg.Draw("SAME");
     plotlabel.Draw("SAME");
     for k in range(len(FILE_TYPES)):
-    	canvas.Print(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+histoslog_label[l]+"."+FILE_TYPES[k]);
+        canvas.Print(FILE_TYPES[k]+"/"+JOB+"_"+EVTINPUT+"evt_"+histoslog_label[l]+"."+FILE_TYPES[k]);
+        if histoslog_label[l] == 'phoivm':
+            print(histoslog[l][m].Integral())
     leg.Clear();
     if data:
         dataonly.SetLineStyle(2);
