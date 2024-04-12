@@ -22,3 +22,6 @@ FILES   = ['samples/madgraph-photonflux-axax-aa.lhe', 'samples/madgraph-photonfl
 # Luminosity
 lumi    = 150
 
+# Particles of interest
+IDS     = [22, 22]
+

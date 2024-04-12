@@ -29,6 +29,10 @@ filled  = eval(rootinput[1][6])
 stacked = eval(rootinput[1][7])
 data    = eval(rootinput[1][8])
 
+# PARTICLES OF INTEREST
+IDS     = eval(rootinput[1][15])
+
+
 # KINEMATICAL CUTS: #FIXME
 INVMCUTUPPER = 14000.0; # (NO CUT 9999.0 )
 INVMCUTLOWER = 10.0; # (NO CUT 0.0)
@@ -46,14 +50,14 @@ PTCUTLOWER = 10.0; # (NO CUT 0.0)
 # INPUT FILES:
 
 #processo 3
-FILES   = eval(rootinput[1][12])
-#FIXME
+FILES   = eval(rootinput[1][13])#FIXME
+
 
 # EVENT SAMPLE INPUT:
-Nevt    = eval(rootinput[1][9]) #FIXME
-Nmax    = eval(rootinput[1][10]) # number of max events to obtain from samples
+Nevt    = eval(rootinput[1][10]) #FIXME
+Nmax    = eval(rootinput[1][11]) # number of max events to obtain from samples
 EVTINPUT= str(int(Nevt/1000))+"k";
-SQRTS   = eval(rootinput[1][11]) # in GeV
+SQRTS   = eval(rootinput[1][12]) # in GeV
 
 #####################################################################
 
@@ -105,6 +109,10 @@ mueta        = []
 phopz        = []
 phopt        = []
 phoen        = []
+phoivm       = []
+phopsrap2    = []
+phopsrap1    = []
+phoY         = []
 
 # 2D:
 DDmppmmumu   = []
@@ -114,7 +122,7 @@ DDxipximu    = []
 # SORTING THE DISTRIBUTIONS WITHIN THE SETS:
 
 # 1D
-histoslog  = [protpz,proten,protxi,protpt,proteta,mpp,mupz,muen,mupt,ivmmu,mueta,phopz,phopt,phoen];
+histoslog  = [protpz,proten,protxi,protpt,proteta,mpp,mupz,muen,mupt,ivmmu,mueta,phopz,phopt,phoen,phoivm,phopsrap2,phopsrap1,phoY]
 
 # 2D
 DDlog      = [DDmppmmumu,DDxipximu] 
@@ -147,9 +155,13 @@ for i in range(len(FILES)):
     mupt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,-5., 40.0))
     ivmmu.append(TH1D("1D_ivmmu"+"_"+PDF[i]       , "", 50,0., 120.0))
     mueta.append(TH1D("1D_mueta"+"_"+PDF[i]       , "", 50,-15., 15.))
-    phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,4973., 4980.))
-    phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 500.))
-    phoen.append(TH1D("1D_phoen"+"_"+PDF[i]       , "", 50,-100., 2000.))
+    phopz.append(TH1D("1D_phopz"+"_"+PDF[i]       , "", 50,-10000., 10000.))
+    phopt.append(TH1D("1D_phopt"+"_"+PDF[i]       , "", 50,0., 8000.))
+    phoen.append(TH1D("1D_phoen"+"_"+PDF[i]       , "", 50,-100., 5000.))
+    phoivm.append(TH1D("1D_phoivm"+"_"+PDF[i]     , "", 50, -1000, 10000))
+    phopsrap2.append(TH1D('1D_phopsrap2'+'_'+PDF[i] , '', 50, -1, 1))
+    phopsrap1.append(TH1D('1D_phopsrap1'+'_'+PDF[i] , '', 50, -10, 10))
+    phoY.append(TH1D('1D_phoY'+'_'+PDF[i]         , '', 50, -10000, 10000))
     #mopz.append(TH1D("1D_mupz"+"_"+PDF[i]       , "", 50,-2500.,2500.))
     #moen.append(TH1D("1D_muen"+"_"+PDF[i]       , "", 50,-100., 900.))
     #mopt.append(TH1D("1D_mupt"+"_"+PDF[i]       , "", 50,-5., 40.0))
@@ -160,6 +172,11 @@ for i in range(len(FILES)):
 
     # LOOP OVER LINES IN LHE SAMPLE:
 
+    # Flags for differentiating particles
+    first_photon = False
+    first_muon    = False
+    first_proton = False
+
     # RESET EVENT COUNTING:
     event  = 0;
     evPASS = 0;
@@ -168,7 +185,7 @@ for i in range(len(FILES)):
         for j in range(87): # skip first 434 lines to avoid comments
             f.readline()
     elif (i == 1):
-        for j in range(384): # skip first 431 lines to avoid comments
+        for j in range(401): # skip first 431 lines to avoid comments
             f.readline()
     elif (i == 2):
         for j in range(7): # skip first 430 lines to avoid comments
@@ -192,34 +209,38 @@ for i in range(len(FILES)):
             if event%evtsplit==0: print ("Event %i [%.2f%%]" % (event,perct));
             elif event>Nevt: break;
         # 4-VECTORS FOR DECAY PRODUCTS:
-        elif coll[0] == '22' and eval(coll[8]) > 0:
+        elif coll[0] == '22' and coll[1] == '1' and first_photon == False:
             dp = TLorentzVector();
             px = float(coll[6]);
             py = float(coll[7]);
             pz = float(coll[8]);
             en = float(coll[9]);
             dp.SetPxPyPzE(px,py,pz,en);
-        elif coll[0] == '22' and eval(coll[8]) < 0:
+            first_photon = True
+        elif coll[0] == '22' and coll[1] == '1' and first_photon:
             dm = TLorentzVector();
             px = float(coll[6]);
             py = float(coll[7]);
             pz = float(coll[8]);
             en = float(coll[9]);
             dm.SetPxPyPzE(px,py,pz,en);
-        elif coll[0] == '13' and coll[1] == '1':
+            first_photon = False 
+        elif coll[0] == '13' and coll[1] == '1' and first_muon == False:
             dmu = TLorentzVector();
             px = float(coll[6]);
             py = float(coll[7]);
             pz = float(coll[8]);
             en = float(coll[9]);
             dmu.SetPxPyPzE(px,py,pz,en);
-        elif coll[0] == '-13' and coll[1] == '1':
+            first_muon = True
+        elif coll[0] == '-13' and coll[1] == '1' and first_muon:
             damu = TLorentzVector();
             px = float(coll[6]);
             py = float(coll[7]);
             pz = float(coll[8]);
             en = float(coll[9]);
             damu.SetPxPyPzE(px,py,pz,en);
+            first_muon = False
         elif coll[0] == '90':
             dmo = TLorentzVector();
             px = float(coll[6]);
@@ -227,20 +248,22 @@ for i in range(len(FILES)):
             pz = float(coll[8]);
             en = float(coll[9]);
             dmo.SetPxPyPzE(px,py,pz,en);
-        elif coll[0] == '2212' and coll[1] == '1' and eval(coll[8]) > 0 and abs(eval(coll[8])) < (SQRTS/2):
+        elif coll[0] == '2212' and coll[1] == '1' and first_proton == False and abs(eval(coll[8])) < (SQRTS/2):
             dpp = TLorentzVector();
             px = float(coll[6]);
             py = float(coll[7]);
             pz = float(coll[8]);
             en = float(coll[9]);
-            dpp.SetPxPyPzE(px,py,pz,en);
-        elif coll[0] == '2212' and coll[1] == '1' and eval(coll[8]) < 0 and abs(eval(coll[8])) < (SQRTS/2):
+            dpp.SetPxPyPzE(px,py,pz,en)
+            first_proton = True
+        elif coll[0] == '2212' and coll[1] == '1' and first_proton and abs(eval(coll[8])) < (SQRTS/2):
             dpm = TLorentzVector();
             px = float(coll[6]);
             py = float(coll[7]);
             pz = float(coll[8]);
             en = float(coll[9]);
-            dpm.SetPxPyPzE(px,py,pz,en);
+            dpm.SetPxPyPzE(px,py,pz,en)
+            first_proton = False
         # CLOSE EVENT AND FILL HISTOGRAMS:
         elif coll[0] == "</event>":
             # KINEMATICS OF DECAY PRODUCTS:
@@ -252,8 +275,8 @@ for i in range(len(FILES)):
                 #and abs((damu+dmu).Eta()) <= ETAPAIRCUT
                 and dmu.Pt() >= PTCUTLOWER
                 and damu.Pt() >= PTCUTLOWER
-                and dp.Pt() <= PTCUTUPPER
-                and dm.Pt() <= PTCUTUPPER
+                #and dp.Pt() <= PTCUTUPPER
+                #and dm.Pt() <= PTCUTUPPER
                 and abs(damu.Eta()) <= ETACUT
                 and abs(dmu.Eta()) <= ETACUT):
                 # 1D:
@@ -270,36 +293,41 @@ for i in range(len(FILES)):
                 proteta[i].Fill(dpp.Eta())
                 proteta[i].Fill(dpm.Eta())
                 #-------------------------Múon mesurements
-                mupz[i].Fill(dmu.Pz())
-                muen[i].Fill(dmu.E())
-                muen[i].Fill(damu.E())
-                mupt[i].Fill(dmu.Pt())
-                mupt[i].Fill(damu.Pt())
-                ivmmu[i].Fill((dmu+damu).M())
-                mueta[i].Fill(dmu.Eta())
-                mueta[i].Fill(damu.Eta())
+                if 13 in IDS or -13 in IDS:
+                    mupz[i].Fill(dmu.Pz())
+                    muen[i].Fill(dmu.E())
+                    muen[i].Fill(damu.E())
+                    mupt[i].Fill(dmu.Pt())
+                    mupt[i].Fill(damu.Pt())
+                    ivmmu[i].Fill((dmu+damu).M())
+                    mueta[i].Fill(dmu.Eta())
+                    mueta[i].Fill(damu.Eta())
                 #-------------------------Photon mesurements
-                phopt[i].Fill(dp.Pt())
-                phopt[i].Fill(dm.Pt())
-                phopz[i].Fill(dp.Pz())
-                phopz[i].Fill(dm.Pz())
-                phoen[i].Fill(dm.E())
-                phoen[i].Fill(dp.E())
+                if 22 in IDS:
+                    phopt[i].Fill(dp.Pt())
+                    phopt[i].Fill(dm.Pt())
+                    phopz[i].Fill(dp.Pz())
+                    phopz[i].Fill(dm.Pz())
+                    phoen[i].Fill(dm.E())
+                    phoen[i].Fill(dp.E())
                 #-------------------------Monopole mesurements
-                #mopz[i].Fill(dmo.Pz())
-                #moen[i].Fill(dmo.E())
-                #mopt[i].Fill(dmo.Pt())
-
+                if 90 in IDS:
+                    mopz[i].Fill(dmo.Pz())
+                    moen[i].Fill(dmo.E())
+                    mopt[i].Fill(dmo.Pt())
+  
                 #-------------------------Mesurements for the KS test
-                KS_ivm_pp[i].append(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS/2)))))*SQRTS)
-                KS_protxi[i].append(1-(dpp.Pz()/(SQRTS/2)))
-                KS_protxi[i].append(1-(dpm.Pz()/(-(SQRTS/2))))
-                KS_ivm_mu[i].append((dmu+damu).M())
-
+                if 13 in IDS and -13 in IDS:
+                    KS_ivm_pp[i].append(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS/2)))))*SQRTS)
+                    KS_protxi[i].append(1-(dpp.Pz()/(SQRTS/2)))
+                    KS_protxi[i].append(1-(dpm.Pz()/(-(SQRTS/2))))
+                    KS_ivm_mu[i].append((dmu+damu).M())
+  
                 # 2D:
-                DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS//2)))))*SQRTS, (dmu+damu).M())
-                DDxipximu[i].Fill(1-(dpp.Pz()/(SQRTS/2)), (1/SQRTS)*(dmu.Pt()*exp(dmu.Eta())+damu.Pt()*exp(damu.Eta())))
-
+                if 13 in IDS and -13 in IDS:
+                    DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS//2)))))*SQRTS, (dmu+damu).M())
+                    DDxipximu[i].Fill(1-(dpp.Pz()/(SQRTS/2)), (1/SQRTS)*(dmu.Pt()*exp(dmu.Eta())+damu.Pt()*exp(damu.Eta())))
+  
                 evPASS += 1;
             elif ( cuts and not INNER
                 and (dp+dm).M() >= INVMCUTLOWER
@@ -368,33 +396,44 @@ for i in range(len(FILES)):
                 proteta[i].Fill(dpp.Eta())
                 proteta[i].Fill(dpm.Eta())
                 #-------------------------Medidas dos Múons
-                mupz[i].Fill(dmu.Pz())
-                muen[i].Fill(dmu.E())
-                muen[i].Fill(damu.E())
-                mupt[i].Fill(dmu.Pt())
-                mupt[i].Fill(damu.Pt())
-                ivmmu[i].Fill((dmu+damu).M())
-                mueta[i].Fill(dmu.Eta())
-                mueta[i].Fill(damu.Eta())
+                if 13 in IDS and -13 in IDS:
+                    mupz[i].Fill(dmu.Pz())
+                    muen[i].Fill(dmu.E())
+                    muen[i].Fill(damu.E())
+                    mupt[i].Fill(dmu.Pt())
+                    mupt[i].Fill(damu.Pt())
+                    ivmmu[i].Fill((dmu+damu).M())
+                    mueta[i].Fill(dmu.Eta())
+                    mueta[i].Fill(damu.Eta())
                 #-------------------------Medidas dos fótons
-                phopt[i].Fill(dp.Pt())
-                phopt[i].Fill(dm.Pt())
-                phopz[i].Fill(dp.Pz())
-                phopz[i].Fill(dm.Pz())
-                phoen[i].Fill(dm.E())
-                phoen[i].Fill(dp.E())
+                if 22 in IDS:
+                    phopt[i].Fill(dp.Pt())
+                    phopt[i].Fill(dm.Pt())
+                    phopz[i].Fill(dp.Pz())
+                    phopz[i].Fill(dm.Pz())
+                    phoen[i].Fill(dp.E())
+                    phoen[i].Fill(dm.E())
+                    phoivm[i].Fill((dp+dm).M())
+                    phopsrap2[i].Fill((dp+dm).Eta())
+                    phopsrap1[i].Fill(dp.Eta())
+                    phopsrap1[i].Fill(dm.Eta())               
+                    phoY[i].Fill(dp.Y())
+                    phoY[i].Fill(dm.Y())
                 #-------------------------Medidas do monopolo
-                #mopz[i].Fill(dmo.Pz())
-                #moen[i].Fill(dmo.E())
-                #mopt[i].Fill(dmo.Pt())
-
+                if 90 in IDS:
+                    mopz[i].Fill(dmo.Pz())
+                    moen[i].Fill(dmo.E())
+                    mopt[i].Fill(dmo.Pt())
+  
                 # 2D:
-                DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS//2)))))*SQRTS, (dmu+damu).M())
-                DDxipximu[i].Fill(1-(dpp.Pz()/(SQRTS/2)), (1/SQRTS)*(dmu.Pt()*exp(dmu.Eta())+damu.Pt()*exp(damu.Eta())))
+                if 13 in IDS and -13 in IDS:
+                    DDmppmmumu[i].Fill(sqrt((1-(dpp.Pz()/(SQRTS/2)))*(1-(dpm.Pz()/(-(SQRTS//2)))))*SQRTS, (dmu+damu).M())
+                    DDxipximu[i].Fill(1-(dpp.Pz()/(SQRTS/2)), (1/SQRTS)*(dmu.Pt()*exp(dmu.Eta())+damu.Pt()*exp(damu.Eta())))
 
-
+                evPASS += 1
         # End of loop over lines
-        if evPASS >= Nmax: break
+        if evPASS >= Nmax: break   
+    #print(phoivm[i].Integral())
     if cuts: print ("Events passing acceptance: %i/%i" % (evPASS,event));
         #print ("Integral of %s: %.6f nb" % (PDF[i],evPASS*xsec[i]/event));
 # End of loop over files
