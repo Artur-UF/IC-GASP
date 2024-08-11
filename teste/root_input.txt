@@ -1,0 +1,27 @@
+# CROSS SECTION(S) (pb):
+xsec    = [1.752000e-03,3.598700e+02]
+
+# Plotting options:
+JOB     = "histos"
+PDF     = ['aaaa','ppaa']
+scale   = False
+cuts    = False 
+setLog  = False
+filled  = False
+stacked = False
+data    = False
+LUMI    = False
+
+# EVENT SAMPLE INPUT
+Nevt    = 10000
+Nmax    = 10000
+SQRTS   = 13000
+
+FILES   = ['newaaaa_unweighted_events.lhe', 'newppaa_unweighted_events.lhe']
+
+# Luminosity
+lumi    = 150
+
+# Particles of interest
+IDS     = [2212, 22]
+

@@ -23,5 +23,19 @@ FILES   = ["samples/newevrectest.dat", 'samples/newunweighted_events.3.5.lhe', '
 lumi    = 150
 
 # Particles of interest
-IDS     = [13, -13]
+IDS     = [2212]
+
+# Kinematical Cuts
+INVMCUTUPPER = 14000.0 # (NO CUT 9999.0 )
+INVMCUTLOWER = 10.0 # (NO CUT 0.0)
+
+PTPAIRCUTUPPER = 9999.0 # (NO CUT 0.0 )
+PTPAIRCUTLOWER = 0.0 # (NO CUT 0.0)
+
+ETACUT = 2.5  # NO CUT: INNER TURE, ETACUT = 20
+ETAPAIRCUT = 5000. # (NO CUT 100.)
+INNER = True # (TRUE: -x < y < +x ; FALSE: y < -x AND y > +x)
+
+PTCUTUPPER = 9999.0 # (NO CUT 9999.0 )
+PTCUTLOWER = 10.0 # (NO CUT 0.0)
 
